@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sketching & Animation App</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="tool-btn active" data-tool="select">
+          <span>📍</span>
+          <span>Select</span>
+        </button>
+        <button class="tool-btn" data-tool="pen">
+          <span>✏️</span>
+          <span>Pen</span>
+        </button>
+        <button class="tool-btn" data-tool="eraser">
+          <span>🧹</span>
+          <span>Erase</span>
+        </button>
+        <button class="tool-btn" data-tool="line">
+          <span>📏</span>
+          <span>Line</span>
+        </button>
+        <button class="tool-btn" data-tool="rectangle">
+          <span>⬜</span>
+          <span>Rect</span>
+        </button>
+        <button class="tool-btn" data-tool="circle">
+          <span>⭕</span>
+          <span>Circle</span>
+        </button>
+        <button class="tool-btn" data-tool="oval">
+          <span>🥚</span>
+          <span>Oval</span>
+        </button>
+        <button class="tool-btn" data-tool="arrow">
+          <span>↗️</span>
+          <span>Arrow</span>
+        </button>
+        <button class="tool-btn" data-tool="diamond">
+          <span>💎</span>
+          <span>Diamond</span>
+        </button>
+        <button class="tool-btn" data-tool="text">
+          <span>📝</span>
+          <span>Text</span>
+        </button>
+        <button class="tool-btn" data-tool="image">
+          <span>🖼️</span>
+          <span>Image</span>
+        </button>
+      </div>
+
+      <!-- Canvas Container -->
+      <div class="canvas-container">
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="mainCanvas" width="800" height="600"></canvas>
+          <div class="selection-handles" id="selectionHandles"></div>
+        </div>
+
+        <!-- Frames Toggle Button -->
+        <button
+          class="frames-toggle-btn"
+          id="framesToggleBtn"
+          onclick="toggleFramesPanel()"
+        >
+          📽️ Hide Frames
+        </button>
+      </div>
+
+      <!-- Properties Panel -->
+      <div class="properties-panel">
+        <button class="close-properties-panel">❌</button>
+        <div class="property-group first-property-group">
+          <h3>Stroke</h3>
+          <div class="property-row">
+            <label>Color:</label>
+            <div class="color-picker-wrapper">
+              <div
+                class="color-preview"
+                id="strokeColorPreview"
+                style="background: #000000"
+              ></div>
+              <input type="color" id="strokeColor" value="#000000" />
+            </div>
+          </div>
+          <div class="property-row">
+            <label>Width:</label>
+            <input type="range" id="strokeWidth" min="1" max="20" value="2" />
+            <span id="strokeWidthValue">2</span>
+          </div>
+        </div>
+
+        <div class="property-group">
+          <h3>Fill</h3>
+          <div class="property-row">
+            <label>Color:</label>
+            <div class="color-picker-wrapper">
+              <div
+                class="color-preview"
+                id="fillColorPreview"
+                style="background: transparent; border: 1px solid #555"
+              ></div>
+              <input type="color" id="fillColor" value="#ffffff" />
+            </div>
+          </div>
+          <div class="property-row">
+            <label>Enable:</label>
+            <input type="checkbox" id="fillEnabled" />
+          </div>
+        </div>
+
+        <div class="property-group">
+          <h3>Transform</h3>
+          <div class="property-row">
+            <label>X:</label>
+            <input type="number" id="transformX" value="0" />
+          </div>
+          <div class="property-row">
+            <label>Y:</label>
+            <input type="number" id="transformY" value="0" />
+          </div>
+          <div class="property-row">
+            <label>Scale X:</label>
+            <input type="number" id="scaleX" value="1" step="0.1" />
+          </div>
+          <div class="property-row">
+            <label>Scale Y:</label>
+            <input type="number" id="scaleY" value="1" step="0.1" />
+          </div>
+          <div class="property-row">
+            <label>Rotation:</label>
+            <input type="number" id="rotation" value="0" step="1" />
+          </div>
+        </div>
+
+        <div class="property-group">
+          <h3>Export</h3>
+          <div class="property-row">
+            <button class="control-btn" id="exportPngBtn">PNG</button>
+            <button class="control-btn" id="exportSvgBtn">SVG</button>
+          </div>
+          <div class="property-row">
+            <button class="control-btn" id="exportVideoBtn">Video</button>
+          </div>
+        </div>
+        <div class="property-group">
+          <h3>Smoothing</h3>
+          <div class="property-row">
+            <label>Enable:</label>
+            <input type="checkbox" id="smoothingEnabled" checked />
+          </div>
+          <div class="property-row" id="smoothingEpsilonRow">
+            <label>Smoothness:</label>
+            <input
+              type="range"
+              id="smoothingEpsilon"
+              min="0.1"
+              max="10"
+              step="0.1"
+              value="2"
+            />
+            <span id="smoothingEpsilonValue">2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frames Panel -->
+      <div class="frames-panel" id="framesPanel">
+        <div class="frames-list-wrapper">
+          <div id="framesList"></div>
+        </div>
+        <div class="add-frame-btn" id="addFrameBtn" onclick="app.addFrame()">
+          +
+        </div>
+        <div class="animation-controls">
+          <button
+            class="control-btn"
+            id="playBtn"
+            onclick="app.toggleAnimation()"
+          >
+            ▶️
+          </button>
+          <div class="fps-control">
+            <label>FPS:</label>
+            <input type="number" id="fpsInput" value="12" min="1" max="60" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <input type="file" id="imageInput" accept="image/*" style="display: none" />
+
+    <!-- Control Smoothing -->
+    <script>
+      const smoothingEnabled = document.getElementById("smoothingEnabled");
+      const smoothingEpsilonRow = document.getElementById(
+        "smoothingEpsilonRow"
+      );
+      const smoothingEpsilon = document.getElementById("smoothingEpsilon");
+      const smoothingEpsilonValue = document.getElementById(
+        "smoothingEpsilonValue"
+      );
+
+      smoothingEnabled.addEventListener("change", () => {
+        if (smoothingEnabled.checked) {
+          smoothingEpsilonRow.style.display = "";
+        } else {
+          smoothingEpsilonRow.style.display = "none";
+        }
+      });
+
+      smoothingEpsilon.addEventListener("input", () => {
+        smoothingEpsilonValue.textContent = smoothingEpsilon.value;
+      });
+
+      // Initialize value display
+      smoothingEpsilonValue.textContent = smoothingEpsilon.value;
+      if (!smoothingEnabled.checked) {
+        smoothingEpsilonRow.style.display = "none";
+      }
+    </script>
+
+    <!-- <script type="module" src="js/main.ts"></script> -->
+    <script type="module" src="./scripts/js/main.js"></script>
+    <script type="module">
+      import SketchingApp from "./scripts/js/main.js";
+      window.app = new SketchingApp();
+      // app.init();
+      document.getElementById("exportPngBtn").addEventListener("click", () => {
+        app.exportFrame("png");
+      });
+      document.getElementById("exportSvgBtn").addEventListener("click", () => {
+        app.exportFrame("svg");
+      });
+      document
+        .getElementById("exportVideoBtn")
+        .addEventListener("click", (e) => {
+          app.exportAnimation();
+        });
+    </script>
+    <script>
+      toggleFramesPanel = () => {
+        const framesPanel = document.getElementById("framesPanel");
+        framesPanel.classList.toggle("hidden");
+        const toggleBtn = document.getElementById("framesToggleBtn");
+        if (framesPanel.classList.contains("hidden")) {
+          toggleBtn.textContent = "📽️ Show Frames";
+        } else {
+          toggleBtn.textContent = "📽️ Hide Frames";
+        }
+      };
+    </script>
+    <script>
+      document
+        .querySelector(".close-properties-panel")
+        .addEventListener("click", () => {
+          document.querySelector(".properties-panel").classList.add("hidden");
+        });
+    </script>
+  </body>
+</html>

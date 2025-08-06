@@ -1,0 +1,83 @@
+import Point from "./core/Point.js";
+import EventHandler from "./EventHandler.js";
+import UISetup from "./UISetup.js";
+import ShapeManager from "./ShapeManager.js";
+import AnimationManager from "./AnimationManager.js";
+import Renderer from "./Renderer.js";
+import SelectionTransformer from "./SelectionTransformer.js";
+import showExportBackgroundDialog from "./helpers/exportformat.js";
+
+// Main application class for the sketching and animation app
+export default class SketchingApp {
+  constructor() {
+    this.canvas = document.getElementById("mainCanvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.currentTool = "select";
+    this.isDrawing = false;
+    this.currentShape = null;
+    this.selectedShapes = [];
+    this.selectionTransformer = new SelectionTransformer(this);
+    this.frames = [new AnimationManager.Frame()];
+    this.currentFrameIndex = 0;
+    this.animationPlaying = false;
+    this.animationFrame = null;
+    this.lastAnimationTime = 0;
+    this.fps = 12;
+    this.clipboard = null;
+    this.viewport = {
+      x: 0,
+      y: 0,
+      zoom: 1,
+    };
+    this.lastMousePos = new Point(0, 0);
+    this.isDragging = false;
+    this.dragStart = new Point(0, 0);
+
+    this.eventHandler = new EventHandler(this);
+    this.uiSetup = new UISetup(this);
+    this.shapeManager = new ShapeManager(this);
+    this.animationManager = new AnimationManager(this);
+    this.renderer = new Renderer(this);
+
+    this.eventHandler.setupEventListeners();
+    this.uiSetup.setupUI();
+    this.renderer.render();
+    this.animationManager.updateFramesPanel();
+  }
+
+  addFrame() {
+    this.animationManager.addFrame();
+  }
+  toggleAnimation() {
+    this.animationManager.toggleAnimation();
+  }
+
+  setTool(tool) {
+    this.shapeManager.setTool(tool);
+  }
+
+  getMousePos(e) {
+    return this.eventHandler.getMousePos(e);
+  }
+
+  resetZoom() {
+    this.renderer.resetZoom();
+  }
+
+  getCurrentFrame() {
+    return this.animationManager.getCurrentFrame();
+  }
+
+  exportFrame(format) {
+    showExportBackgroundDialog().then(({ bg, cancelled }) => {
+      if (!cancelled) {
+        // Proceed with export using bg ('transparent' or 'white')s
+        this.renderer.exportFrame(format, bg);
+      }
+    });
+  }
+
+  exportAnimation() {
+    this.renderer.exportAnimation();
+  }
+}
