@@ -14,12 +14,12 @@ class Shape {
   // Draws the shape on the canvas context
   draw(ctx) {
     ctx.save();
-    this.transform.applyToContext(ctx);
-    this.drawShape(ctx);
+    this.transform.applyToContext(ctx,this);
+    this.drawShape(ctx,{scaleX : this.transform.scaleX, scaleY : this.transform.scaleY});
     ctx.restore();
   }
   // Abstract method to be overridden by subclasses for actual drawing
-  drawShape(ctx) {
+  drawShape(ctx,scale) {
     // Override in subclasses
   }
   // Abstract method to get the bounding box of the shape

@@ -9,14 +9,14 @@ class RectangleShape extends Shape {
     this.height = height || 100;
   }
   // Draws the rectangle
-  drawShape(ctx) {
+  drawShape(ctx,scale = { scaleX : 1, scaleY : 1 }, rotate= {centerX : 0, centerY : 0}) {
     ctx.strokeStyle = this.strokeColor;
-    ctx.lineWidth = this.strokeWidth;
+    ctx.lineWidth = this.strokeWidth/((scale.scaleX + scale.scaleY)/2);
     if (this.fillEnabled) {
       ctx.fillStyle = this.fillColor;
-      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
     }
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    ctx.strokeRect(-this.width/2,-this.height/2, this.width, this.height);
   }
   // Gets the bounding box of the rectangle
   getBounds() {
@@ -35,6 +35,13 @@ class RectangleShape extends Shape {
       point.y >= this.y &&
       point.y <= this.y + this.height
     );
+  }
+
+  getCenter() {
+    return {
+        x : this.x + this.width/2,
+        y: this.y + this.height/2
+    }
   }
 }
 export default RectangleShape;

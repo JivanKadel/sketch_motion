@@ -314,7 +314,7 @@ export default class ShapeManager {
 
   updateSelectedShapesTransform(property, value) {
     this.app.selectedShapes.forEach((shape) => {
-      const transformProperty = property.replace("transform", "").toLowerCase();
+      const transformProperty = property.startsWith("sca")?property:property.replace("transform", "").toLowerCase();
 
       if (transformProperty === "x" || transformProperty === "y") {
         shape.transform[transformProperty] = value;

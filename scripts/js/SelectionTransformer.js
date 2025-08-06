@@ -32,12 +32,13 @@ class SelectionTransformer {
     ];
 
     const transformedCorners = corners.map((pt) =>
-      shape.transform.transformPoint(pt, pivot)
+      shape.transform.transformPoint(pt, pivot,shape)
     );
 
     const rotationHandle = shape.transform.transformPoint(
       { x: bounds.x + bounds.width / 2, y: bounds.y - 30 },
-      pivot
+      pivot,
+      shape
     );
 
     ctx.save();
@@ -63,7 +64,8 @@ class SelectionTransformer {
     // Draw line from top-center to rotation handle
     const topCenter = shape.transform.transformPoint(
       { x: bounds.x + bounds.width / 2, y: bounds.y },
-      pivot
+      pivot,
+      shape
     );
     ctx.beginPath();
     ctx.moveTo(topCenter.x, topCenter.y);

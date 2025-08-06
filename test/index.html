@@ -1,0 +1,76 @@
+<html>
+<head>
+    <style>
+        body {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<canvas id="box" width="500" height="500"></canvas>
+<script>
+    const STEPS         = 60; // increase or decrease to adjust speed
+    const ROTATION_STEP = Math.PI / STEPS;
+    const SCALE_STEP    = Math.pow( 1.5, 1.0 / STEPS ); // 150% at end
+
+    const render = function () {
+        const canvas = document.getElementById( 'box' );
+        const ctx    = canvas.getContext( '2d' );
+        const image  = new Image();
+
+        const resetCanvas = function () {
+            ctx.fillStyle = 'white';
+            ctx.fillRect( 0, 0, canvas.width, canvas.height );
+        };
+
+        const renderImage = function ( x, y, width, height, angle, scale ) {
+            const centerX = width / 2.0;
+            const centerY = height / 2.0;
+
+            // save context's current transform state
+            ctx.save();
+
+            // move context's origin to image position
+            ctx.translate( x, y );
+
+            // apply transformations
+            ctx.rotate( angle );
+            ctx.scale( scale, scale );
+
+            // draw image centered on its position
+            ctx.drawImage( image, -centerX, -centerY, width, height );
+
+            // restore context's previous transform state
+            ctx.restore();
+        };
+
+        const nextTick = function nextTick ( angle, scale ) {
+            resetCanvas();
+            renderImage( 150, 150, 100, 100, angle, scale );
+            // renderImage( 250, 100, 100, 100, angle, scale );
+            // renderImage( 300, 300, 50, 50, angle, scale );
+            // renderImage( 100, 350, 75, 75, angle, scale );
+
+            if ( angle < Math.PI * 2.0 ) {
+                requestAnimationFrame( function () {
+                    const newAngle = angle + ROTATION_STEP;
+                    const newScale = scale * SCALE_STEP;
+
+                    nextTick( Math.min( Math.PI * 2.0, newAngle ), newScale );
+                } );
+            }
+        };
+
+        image.addEventListener( 'load', function () {
+            requestAnimationFrame( function () { nextTick( 0, 1.0 ); } );
+        } );
+
+        // intialize
+        resetCanvas();
+        image.src = 'https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg';
+    };
+
+    window.document.addEventListener( 'DOMContentLoaded', render );
+</script>
+</body>
+</html>

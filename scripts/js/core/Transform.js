@@ -20,12 +20,12 @@ class Transform {
   }
 
   // Apply transformation relative to a pivot point (e.g., shape center)
-  applyToContext(ctx, pivot = { x: 0, y: 0 }) {
+  applyToContext(ctx, shape) {
     ctx.translate(this.x, this.y);
 
     // Move pivot to origin
-    ctx.translate(pivot.x, pivot.y);
-
+    // ctx.translate(-pivot.x, -pivot.y);
+    ctx.translate(shape.x, shape.y);
     // Rotation
     ctx.rotate((this.rotation * Math.PI) / 180);
 
@@ -38,11 +38,13 @@ class Transform {
     ctx.transform(1, Math.tan(skewYRad), Math.tan(skewXRad), 1, 0, 0);
 
     // Move pivot back
-    ctx.translate(-pivot.x, -pivot.y);
+    // ctx.translate(pivot.x, pivot.y);
+
+
   }
 
   // Transform a point with optional pivot
-  transformPoint(point, pivot = { x: 0, y: 0 }) {
+  transformPoint(point, pivot = { x: 0, y: 0 },shape= { width: 0, height: 0 }) {
     // Translate to pivot
     let x = point.x - pivot.x;
     let y = point.y - pivot.y;
@@ -66,8 +68,8 @@ class Transform {
 
     // Translate back + position
     return {
-      x: rotX + pivot.x + this.x,
-      y: rotY + pivot.y + this.y,
+      x: rotX + pivot.x + this.x- shape.width/2,
+      y: rotY + pivot.y + this.y- shape.width/2,
     };
   }
 
