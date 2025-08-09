@@ -13,7 +13,6 @@ export default class Renderer {
     this.app.ctx.translate(this.app.viewport.x, this.app.viewport.y);
 
     this.app.getCurrentFrame().draw(this.app.ctx);
-    // new AnimationManager(this.app).getCurrentFrame().draw(this.app.ctx);
 
     if (this.app.currentShape) {
       this.app.currentShape.draw(this.app.ctx);
@@ -49,8 +48,7 @@ export default class Renderer {
         exportCtx.fillStyle = "#fff";
         exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
       }
-      // exportCtx.fillStyle = "#ffffff"; // Fill white background
-      // exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
       exportCtx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
       exportCtx.translate(this.app.viewport.x, this.app.viewport.y);
 
@@ -73,24 +71,7 @@ export default class Renderer {
       );
     }
   }
-  // exportFrame(format, bg = "transparent") {
-  //   if (format === "png") {
-  //     const link = document.createElement("a");
-  //     link.download = `frame_${this.app.currentFrameIndex + 1}.png`;
-  //     link.href = this.app.canvas.toDataURL("image/png");
-  //     link.click();
-  //   } else if (format === "svg") {
-  //     showMessageBox(
-  //       "SVG export functionality needs to be implemented with SVG serialization."
-  //     );
-  //   }
-  // }
 
-  // exportAnimation() {
-  //   showMessageBox(
-  //     "Animation export functionality needs to be implemented with video encoding libraries."
-  //   );
-  // }
   exportAnimation() {
     // Check if MediaRecorder and canvas.captureStream are supported
     if (!this.app.canvas.captureStream || !window.MediaRecorder) {

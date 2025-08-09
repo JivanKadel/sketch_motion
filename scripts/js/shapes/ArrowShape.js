@@ -1,4 +1,4 @@
-import LineShape from "./LineShape.js"; // Inherit from LineShape for common line properties
+import LineShape from "./LineShape.js"; 
 // Represents an arrow shape
 class ArrowShape extends LineShape {
   constructor(start, end) {

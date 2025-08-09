@@ -93,16 +93,15 @@ export default class EventHandler {
       }
     });
 
-    ["transformX", "transformY", "scaleX", "scaleY", "rotation"].forEach(
-      (id) => {
-        document.getElementById(id)?.addEventListener("input", (e) => {
-          this.app.shapeManager.updateSelectedShapesTransform(
-            id,
-            parseFloat(e.target.value)
-          );
-        });
-      }
-    );
+    // ["transformX", "transformY", "scaleX", "scaleY", "rotation"].forEach(
+    ["transformX", "transformY", "scale", "rotation"].forEach((id) => {
+      document.getElementById(id)?.addEventListener("input", (e) => {
+        this.app.shapeManager.updateSelectedShapesTransform(
+          id,
+          parseFloat(e.target.value)
+        );
+      });
+    });
   }
 
   getMousePos(e) {

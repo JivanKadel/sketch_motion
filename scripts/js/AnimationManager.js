@@ -23,7 +23,7 @@ export default class AnimationManager {
     if (index >= 0 && index < this.app.frames.length) {
       this.app.currentFrameIndex = index;
       this.app.selectedShapes = [];
-      this.app.shapeManager.hideSelectionHandles();
+      this.app.selectionTransformer.hideSelectionHandles();
       this.updateFramesPanel();
       this.app.renderer.render();
     }

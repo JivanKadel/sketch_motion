@@ -1,7 +1,6 @@
-/**
- * Shows a dialog to choose PNG export background.
- * Returns: { bg: 'transparent' | 'white', cancelled: boolean }
- */
+//  Shows a dialog to choose PNG export background.
+//  Returns: { bg: 'transparent' | 'white', cancelled: boolean }
+
 export default function showExportBackgroundDialog() {
   console.log("showExportBackgroundDialog called");
 
@@ -125,10 +124,3 @@ export default function showExportBackgroundDialog() {
     };
   });
 }
-
-// Example usage:
-// showExportBackgroundDialog().then(({ bg, cancelled }) => {
-//     if (!cancelled) {
-//         // Proceed with export using bg ('transparent' or 'white')
-//     }
-// });

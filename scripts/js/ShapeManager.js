@@ -20,7 +20,7 @@ export default class ShapeManager {
     document.querySelector(`[data-tool="${tool}"]`)?.classList.add("active");
     if (this.app.currentTool !== "select") {
       this.app.selectedShapes = [];
-      this.hideSelectionHandles();
+      this.app.selectionTransformer.hideSelectionHandles();
       this.app.renderer.render();
     }
     if (tool === "image") {
@@ -36,12 +36,13 @@ export default class ShapeManager {
     document.querySelector(".properties-panel")?.classList.remove("hidden");
     if (!clickedShape) {
       this.app.selectedShapes = [];
-      this.hideSelectionHandles();
+      this.app.selectionTransformer.hideSelectionHandles();
     } else {
       if (!this.app.selectedShapes.includes(clickedShape)) {
         this.app.selectedShapes = [clickedShape];
       }
-      this.showSelectionHandles();
+      // this.app.selectionTransformer.showSelectionHandles();
+      this.app.selectionTransformer.showSelectionHandles();
     }
     this.app.renderer.render();
   }
@@ -285,7 +286,7 @@ export default class ShapeManager {
       this.app.getCurrentFrame().removeShape(shape);
     });
     this.app.selectedShapes = [];
-    this.hideSelectionHandles();
+    this.app.selectionTransformer.hideSelectionHandles();
     this.app.renderer.render();
   }
 
@@ -318,107 +319,16 @@ export default class ShapeManager {
 
       if (transformProperty === "x" || transformProperty === "y") {
         shape.transform[transformProperty] = value;
-      } else if (
-        transformProperty === "scaleX" ||
-        transformProperty === "scaleY"
-      ) {
+      } else if (transformProperty === "scale") {
         shape.transform[transformProperty] = value;
       } else if (transformProperty === "scale") {
         shape.transform.scale = value;
       } else if (transformProperty === "rotation") {
         shape.transform.rotation = value;
-      } else if (
-        transformProperty === "skewX" ||
-        transformProperty === "skewY"
-      ) {
-        shape.transform[transformProperty] = value;
       }
     });
 
     this.app.renderer.render();
-  }
-
-  showSelectionHandles() {
-    if (this.app.selectedShapes.length !== 1) return;
-
-    const shape = this.app.selectedShapes[0];
-    const bounds = shape.getBounds();
-    const handleSize = 10;
-    const ctx = this.app.ctx;
-
-    const pivot = shape.getCenter?.() ?? { x: 0, y: 0 };
-    const transform = shape.transform;
-
-    const topLeft = transform.transformPoint(
-      { x: bounds.x, y: bounds.y },
-      pivot
-    );
-    const topRight = transform.transformPoint(
-      { x: bounds.x + bounds.width, y: bounds.y },
-      pivot
-    );
-    const bottomLeft = transform.transformPoint(
-      { x: bounds.x, y: bounds.y + bounds.height },
-      pivot
-    );
-    const bottomRight = transform.transformPoint(
-      { x: bounds.x + bounds.width, y: bounds.y + bounds.height },
-      pivot
-    );
-
-    const rotationHandle = transform.transformPoint(
-      { x: bounds.x + bounds.width / 2, y: bounds.y - 30 },
-      pivot
-    );
-
-    ctx.save();
-    ctx.setLineDash([]);
-    ctx.strokeStyle = "#0078d4";
-    ctx.fillStyle = "#fff";
-    ctx.lineWidth = 2;
-
-    const handles = [topLeft, topRight, bottomLeft, bottomRight];
-    handles.forEach((h) => {
-      ctx.beginPath();
-      ctx.rect(
-        h.x - handleSize / 2,
-        h.y - handleSize / 2,
-        handleSize,
-        handleSize
-      );
-      ctx.fill();
-      ctx.stroke();
-    });
-
-    ctx.beginPath();
-    ctx.arc(rotationHandle.x, rotationHandle.y, handleSize / 2, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo((topLeft.x + topRight.x) / 2, (topLeft.y + topRight.y) / 2);
-    ctx.lineTo(rotationHandle.x, rotationHandle.y);
-    ctx.stroke();
-
-    ctx.restore();
-
-    this.updateTransformUI();
-  }
-
-  isInsideHandle(point, handle, size = 10) {
-    return (
-      point.x >= handle.x - size / 2 &&
-      point.x <= handle.x + size / 2 &&
-      point.y >= handle.y - size / 2 &&
-      point.y <= handle.y + size / 2
-    );
-  }
-
-  hideSelectionHandles() {
-    const selectionHandles = document.getElementById("selectionHandles");
-    if (selectionHandles) {
-      selectionHandles.innerHTML = "";
-    }
   }
 
   updateTransformUI() {
@@ -428,17 +338,14 @@ export default class ShapeManager {
         shape.transform.x.toString();
       document.getElementById("transformY").value =
         shape.transform.y.toString();
-      document.getElementById("scaleX").value =
-        shape.transform.scaleX.toString();
-      document.getElementById("scaleY").value =
-        shape.transform.scaleY.toString();
+      document.getElementById("scale").value = shape.transform.scale.toString();
+
       document.getElementById("rotation").value =
         shape.transform.rotation.toString();
     } else {
       document.getElementById("transformX").value = "0";
       document.getElementById("transformY").value = "0";
-      document.getElementById("scaleX").value = "1";
-      document.getElementById("scaleY").value = "1";
+      document.getElementById("scale").value = "1";
       document.getElementById("rotation").value = "0";
     }
   }

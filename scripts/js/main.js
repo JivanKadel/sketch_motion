@@ -71,7 +71,7 @@ export default class SketchingApp {
   exportFrame(format) {
     showExportBackgroundDialog().then(({ bg, cancelled }) => {
       if (!cancelled) {
-        // Proceed with export using bg ('transparent' or 'white')s
+        // Export using bg ('transparent' or 'white')
         this.renderer.exportFrame(format, bg);
       }
     });

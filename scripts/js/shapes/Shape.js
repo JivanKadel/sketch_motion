@@ -32,9 +32,9 @@ class Shape {
     // Override in subclasses
     return false;
   }
-  get supportsPixelErasing() {
-    return false;
-  }
+  // get supportsPixelErasing() {
+  //   return false;
+  // }
 
   // Creates a clone of the shape
   clone() {
