@@ -6,6 +6,7 @@ import { showMessageBox } from "./helpers/messagebox.js";
 export default class EventHandler {
   constructor(app) {
     this.app = app;
+    
   }
 
   setupEventListeners() {
