@@ -6,24 +6,20 @@ import { showMessageBox } from "./helpers/messagebox.js";
 export default class EventHandler {
   constructor(app) {
     this.app = app;
-    
   }
 
   setupEventListeners() {
     this.app.canvas.addEventListener("mousedown", (e) => {
       const pos = this.getMousePos(e);
-      this.app.selectionTransformer.handleMouseDown(pos);
-      this.handleMouseDown(e);
+      this.handleMouseDown(e, pos);
     });
 
     this.app.canvas.addEventListener("mousemove", (e) => {
       const pos = this.getMousePos(e);
-      this.app.selectionTransformer.handleMouseMove(pos);
-      this.handleMouseMove(e);
+      this.handleMouseMove(e, pos);
     });
 
     this.app.canvas.addEventListener("mouseup", (e) => {
-      this.app.selectionTransformer.handleMouseUp();
       this.handleMouseUp(e);
     });
 
@@ -94,7 +90,6 @@ export default class EventHandler {
       }
     });
 
-    // ["transformX", "transformY", "scaleX", "scaleY", "rotation"].forEach(
     ["transformX", "transformY", "scale", "rotation"].forEach((id) => {
       document.getElementById(id)?.addEventListener("input", (e) => {
         this.app.shapeManager.updateSelectedShapesTransform(
@@ -113,14 +108,18 @@ export default class EventHandler {
     );
   }
 
-  handleMouseDown(e) {
-    const mousePos = this.getMousePos(e);
-    this.app.lastMousePos = mousePos;
+  handleMouseDown(e, pos) {
+    this.app.lastMousePos = pos;
     this.app.isDragging = true;
-    this.app.dragStart = mousePos;
+    this.app.dragStart = pos;
+
     if (this.app.currentTool === "select") {
-      this.app.selectionTransformer.handleMouseDown(mousePos);
-      this.app.shapeManager.handleSelectMouseDown(mousePos);
+      // Try transformer first (handles take priority)
+      this.app.selectionTransformer.handleMouseDown(pos);
+      if (!this.app.selectionTransformer.dragMode) {
+        // If no handle was clicked, attempt to select a shape
+        this.app.shapeManager.handleSelectMouseDown(pos);
+      }
     } else if (this.app.currentTool === "pen") {
       let epsilon = 0;
       const smoothingEnabled = document.getElementById("smoothingEnabled");
@@ -132,39 +131,41 @@ export default class EventHandler {
         );
       }
       this.app.shapeManager.startFreehandStroke(
-        mousePos,
+        pos,
         isSmoothingChecked,
         epsilon
       );
     } else if (this.app.currentTool === "eraser") {
-      this.app.shapeManager.handleErase(mousePos);
+      this.app.shapeManager.handleErase(pos);
     } else if (this.app.currentTool === "text") {
-      this.app.shapeManager.addText(mousePos);
+      this.app.shapeManager.addText(pos);
     } else {
-      this.app.shapeManager.startShapeDrawing(mousePos);
+      this.app.shapeManager.startShapeDrawing(pos);
     }
   }
 
-  handleMouseMove(e) {
-    const mousePos = this.getMousePos(e);
+  handleMouseMove(e, pos) {
     if (!this.app.isDragging) return;
-    if (this.app.currentTool === "select" && this.app.isDragging) {
-      this.app.selectionTransformer.handleMouseMove(mousePos);
-    } else if (this.app.currentTool === "select") {
-      this.app.shapeManager.handleSelectMouseMove(mousePos);
+    if (this.app.currentTool === "select") {
+      // Only handle transformer if a drag is active
+      if (this.app.selectionTransformer.dragMode) {
+        this.app.selectionTransformer.handleMouseMove(pos);
+      } else {
+        this.app.shapeManager.handleSelectMouseMove(pos);
+      }
     } else if (
       this.app.currentTool === "pen" &&
       this.app.currentShape instanceof FreehandStroke
     ) {
-      this.app.currentShape.addPoint(mousePos);
+      this.app.currentShape.addPoint(pos);
       this.app.renderer.render();
     } else if (this.app.currentTool === "eraser") {
-      this.app.shapeManager.handleErase(mousePos);
+      this.app.shapeManager.handleErase(pos);
     } else if (this.app.currentShape) {
-      this.app.shapeManager.updateShapeDrawing(mousePos);
+      this.app.shapeManager.updateShapeDrawing(pos);
       this.app.renderer.render();
     }
-    this.app.lastMousePos = mousePos;
+    this.app.lastMousePos = pos;
   }
 
   handleMouseUp(e) {
