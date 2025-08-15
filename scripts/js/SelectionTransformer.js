@@ -54,10 +54,10 @@ class SelectionTransformer {
 
     transformedCorners.forEach((h) => {
       ctx.save();
-      ctx.translate(h.x+size/2, h.y+size/2);
+      ctx.translate(h.x, h.y);
       ctx.rotate((transformSel.rotation * Math.PI) / 180);
       ctx.beginPath();
-      ctx.rect(-size/2,-size / 2, size, size);
+      ctx.rect(-size/2,-size/2, size, size);
       ctx.fill();
       ctx.stroke();
       ctx.restore();
