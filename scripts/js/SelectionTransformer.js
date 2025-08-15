@@ -1,4 +1,6 @@
 // Selection logic and interaction
+import Transform from "./core/Transform.js";
+
 class SelectionTransformer {
   constructor(app) {
     this.app = app; // reference to main app instance
@@ -48,11 +50,17 @@ class SelectionTransformer {
 
     // Draw handles at transformed corners
     const size = 10;
+    const transformSel = this.app.selectedShapes[0].transform;;
+
     transformedCorners.forEach((h) => {
+      ctx.save();
+      ctx.translate(h.x+size/2, h.y+size/2);
+      ctx.rotate((transformSel.rotation * Math.PI) / 180);
       ctx.beginPath();
-      ctx.rect(h.x - size / 2, h.y - size / 2, size, size);
+      ctx.rect(-size/2,-size / 2, size, size);
       ctx.fill();
       ctx.stroke();
+      ctx.restore();
     });
 
     // Draw rotation handle

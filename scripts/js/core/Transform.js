@@ -48,6 +48,8 @@ class Transform {
     // Translate to pivot
     let x = point.x - pivot.x;
     let y = point.y - pivot.y;
+    x = x+this.x;
+    y = y+this.y;
 
     // Skew
     const skewXRad = (this.skewX * Math.PI) / 180;
