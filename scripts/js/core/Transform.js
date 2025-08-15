@@ -74,7 +74,7 @@ class Transform {
   }
 
   // Inverse of transformPoint (screen → local)
-  inverseTransformPoint(point, pivot = { x: 0, y: 0 }) {
+  inverseTransformPoint(point, pivot = { x: 0, y: 0 },shape) {
     let x = point.x - this.x + pivot.x;
     let y = point.y - this.y + pivot.y;
 
@@ -97,8 +97,8 @@ class Transform {
 
     // Move pivot back
     return {
-      x: invX - pivot.x,
-      y: invY - pivot.y,
+      x: invX - pivot.x + shape.width/2,
+      y: invY - pivot.y + shape.height/2,
     };
   }
 }

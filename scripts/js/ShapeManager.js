@@ -271,7 +271,7 @@ export default class ShapeManager {
       const shape = this.app.frames[this.app.currentFrameIndex].shapes[i];
       const pivot = shape.getCenter?.() ?? { x: 0, y: 0 };
       const localPoint =
-        shape.transform?.inverseTransformPoint(mousePos, pivot) ?? mousePos;
+        shape.transform?.inverseTransformPoint(mousePos, pivot,shape) ?? mousePos;
 
       if (shape.containsPoint(localPoint)) {
         return shape;
