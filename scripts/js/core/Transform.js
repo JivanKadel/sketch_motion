@@ -75,8 +75,8 @@ class Transform {
 
   // Inverse of transformPoint (screen → local)
   inverseTransformPoint(point, pivot = { x: 0, y: 0 }) {
-    let x = point.x - this.x - pivot.x;
-    let y = point.y - this.y - pivot.y;
+    let x = point.x - this.x + pivot.x;
+    let y = point.y - this.y + pivot.y;
 
     // Inverse rotate
     const rad = -(this.rotation * Math.PI) / 180;
@@ -97,8 +97,8 @@ class Transform {
 
     // Move pivot back
     return {
-      x: invX + pivot.x,
-      y: invY + pivot.y,
+      x: invX - pivot.x,
+      y: invY - pivot.y,
     };
   }
 }
