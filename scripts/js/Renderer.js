@@ -19,7 +19,14 @@ export default class Renderer {
     }
 
     this.app.ctx.restore();
-    this.app.selectionTransformer.showSelectionHandles(this.app.ctx);
+
+    // Only show selection handles when in select mode and shapes are selected
+    if (
+      this.app.currentTool === "select" &&
+      this.app.selectedShapes.length > 0
+    ) {
+      this.app.selectionTransformer.showSelectionHandles(this.app.ctx);
+    }
 
     this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
   }

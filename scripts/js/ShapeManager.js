@@ -18,22 +18,29 @@ export default class ShapeManager {
       .querySelectorAll(".tool-btn")
       .forEach((btn) => btn.classList.remove("active"));
     document.querySelector(`[data-tool="${tool}"]`)?.classList.add("active");
-    if (this.app.currentTool !== "select") {
-      this.app.selectedShapes = [];
-      this.app.selectionTransformer.hideSelectionHandles();
-      this.app.renderer.render();
-    }
+
+    // Always clear selection when changing tools
+    this.app.selectedShapes = [];
+    this.app.selectionTransformer.hideSelectionHandles();
+    this.app.renderer.render();
+
     if (tool === "image") {
       document.getElementById("imageInput")?.click();
     }
-    if (tool == "select") {
-      document.querySelector(".properties-panel")?.classList.remove("hidden");
+
+    // Handle properties panel visibility
+    const propertiesPanel = document.querySelector(".properties-panel");
+    if (tool === "select" && this.app.propertiesPanelManuallyHidden) {
+      // Show panel in select mode if it was manually hidden
+      propertiesPanel?.classList.remove("hidden");
+      this.app.propertiesPanelManuallyHidden = false; // Reset the flag
     }
+    // Otherwise, keep the panel visible by default (don't auto-hide on tool change)
   }
 
   handleSelectMouseDown(mousePos) {
     const clickedShape = this.getShapeAtPoint(mousePos);
-    document.querySelector(".properties-panel")?.classList.remove("hidden");
+
     if (!clickedShape) {
       this.app.selectedShapes = [];
       this.app.selectionTransformer.hideSelectionHandles();
@@ -41,7 +48,6 @@ export default class ShapeManager {
       if (!this.app.selectedShapes.includes(clickedShape)) {
         this.app.selectedShapes = [clickedShape];
       }
-      // this.app.selectionTransformer.showSelectionHandles();
       this.app.selectionTransformer.showSelectionHandles();
     }
     this.app.renderer.render();
@@ -53,9 +59,18 @@ export default class ShapeManager {
       const dy = mousePos.y - this.app.lastMousePos.y;
 
       this.app.selectedShapes.forEach((shape) => {
-        if (shape.transform) {
-          shape.transform.x += dx;
-          shape.transform.y += dy;
+        // Move the shape's actual coordinates instead of using transform offset
+        if (shape.x !== undefined && shape.y !== undefined) {
+          shape.x += dx;
+          shape.y += dy;
+        } else if (shape.centerX !== undefined && shape.centerY !== undefined) {
+          shape.centerX += dx;
+          shape.centerY += dy;
+        } else if (shape.start && shape.end) {
+          shape.start.x += dx;
+          shape.start.y += dy;
+          shape.end.x += dx;
+          shape.end.y += dy;
         }
       });
 
@@ -148,12 +163,9 @@ export default class ShapeManager {
     const shapesToRemove = [];
 
     this.app.getCurrentFrame().shapes.forEach((shape) => {
-      const pivot =
-        typeof shape.getCenter === "function"
-          ? shape.getCenter()
-          : { x: 0, y: 0 };
+      const bounds = shape.getBounds();
       const localPoint = shape.transform
-        ? shape.transform.inverseTransformPoint(mousePos, pivot)
+        ? shape.transform.inverseTransformPoint(mousePos, bounds)
         : mousePos;
 
       if (shape.containsPoint(localPoint)) {
@@ -270,9 +282,9 @@ export default class ShapeManager {
       i--
     ) {
       const shape = this.app.frames[this.app.currentFrameIndex].shapes[i];
-      const pivot = shape.getCenter?.() ?? { x: 0, y: 0 };
+      const bounds = shape.getBounds();
       const localPoint =
-        shape.transform?.inverseTransformPoint(mousePos, pivot) ?? mousePos;
+        shape.transform?.inverseTransformPoint(mousePos, bounds) ?? mousePos;
 
       if (shape.containsPoint(localPoint)) {
         return shape;
@@ -298,8 +310,24 @@ export default class ShapeManager {
     if (this.app.clipboard) {
       this.app.clipboard.forEach((shape) => {
         const cloned = shape.clone();
-        cloned.transform.x += 20;
-        cloned.transform.y += 20;
+
+        // Move the cloned shape's actual coordinates
+        if (cloned.x !== undefined && cloned.y !== undefined) {
+          cloned.x += 20;
+          cloned.y += 20;
+        } else if (
+          cloned.centerX !== undefined &&
+          cloned.centerY !== undefined
+        ) {
+          cloned.centerX += 20;
+          cloned.centerY += 20;
+        } else if (cloned.start && cloned.end) {
+          cloned.start.x += 20;
+          cloned.start.y += 20;
+          cloned.end.x += 20;
+          cloned.end.y += 20;
+        }
+
         this.app.getCurrentFrame().addShape(cloned);
       });
       this.app.renderer.render();
@@ -317,10 +345,28 @@ export default class ShapeManager {
     this.app.selectedShapes.forEach((shape) => {
       const transformProperty = property.replace("transform", "").toLowerCase();
 
-      if (transformProperty === "x" || transformProperty === "y") {
-        shape.transform[transformProperty] = value;
-      } else if (transformProperty === "scale") {
-        shape.transform[transformProperty] = value;
+      if (transformProperty === "x") {
+        // Update the shape's actual x coordinate
+        if (shape.x !== undefined) {
+          shape.x = value;
+        } else if (shape.centerX !== undefined) {
+          shape.centerX = value;
+        } else if (shape.start) {
+          const dx = value - shape.start.x;
+          shape.start.x = value;
+          shape.end.x += dx;
+        }
+      } else if (transformProperty === "y") {
+        // Update the shape's actual y coordinate
+        if (shape.y !== undefined) {
+          shape.y = value;
+        } else if (shape.centerY !== undefined) {
+          shape.centerY = value;
+        } else if (shape.start) {
+          const dy = value - shape.start.y;
+          shape.start.y = value;
+          shape.end.y += dy;
+        }
       } else if (transformProperty === "scale") {
         shape.transform.scale = value;
       } else if (transformProperty === "rotation") {
@@ -334,12 +380,24 @@ export default class ShapeManager {
   updateTransformUI() {
     if (this.app.selectedShapes.length === 1) {
       const shape = this.app.selectedShapes[0];
-      document.getElementById("transformX").value =
-        shape.transform.x.toString();
-      document.getElementById("transformY").value =
-        shape.transform.y.toString();
-      document.getElementById("scale").value = shape.transform.scale.toString();
 
+      // Show the shape's actual position
+      let shapeX = 0,
+        shapeY = 0;
+      if (shape.x !== undefined && shape.y !== undefined) {
+        shapeX = shape.x;
+        shapeY = shape.y;
+      } else if (shape.centerX !== undefined && shape.centerY !== undefined) {
+        shapeX = shape.centerX;
+        shapeY = shape.centerY;
+      } else if (shape.start) {
+        shapeX = shape.start.x;
+        shapeY = shape.start.y;
+      }
+
+      document.getElementById("transformX").value = shapeX.toString();
+      document.getElementById("transformY").value = shapeY.toString();
+      document.getElementById("scale").value = shape.transform.scale.toString();
       document.getElementById("rotation").value =
         shape.transform.rotation.toString();
     } else {

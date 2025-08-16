@@ -24,6 +24,7 @@ export default class SketchingApp {
     this.lastAnimationTime = 0;
     this.fps = 12;
     this.clipboard = null;
+    this.propertiesPanelManuallyHidden = false; // Track if user manually hid panel
     this.viewport = {
       x: 0,
       y: 0,
@@ -54,6 +55,12 @@ export default class SketchingApp {
 
   setTool(tool) {
     this.shapeManager.setTool(tool);
+  }
+
+  clearSelection() {
+    this.selectedShapes = [];
+    this.selectionTransformer.hideSelectionHandles();
+    this.renderer.render();
   }
 
   getMousePos(e) {

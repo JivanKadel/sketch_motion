@@ -125,9 +125,9 @@ export default class EventHandler {
       const smoothingEnabled = document.getElementById("smoothingEnabled");
       const isSmoothingChecked = smoothingEnabled?.checked;
 
-      if (smoothingEnabled.checked) {
+      if (smoothingEnabled?.checked) {
         epsilon = parseFloat(
-          document.getElementById("smoothingEpsilonValue").textContent
+          document.getElementById("smoothingEpsilonValue")?.textContent || "0"
         );
       }
       this.app.shapeManager.startFreehandStroke(

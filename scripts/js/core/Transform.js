@@ -20,22 +20,46 @@ class Transform {
     this.scaleY = s;
   }
 
-  // Always rotate/scale around the object's center
-  applyToContext(ctx) {
-    const pivot = { x: this.width / 2, y: this.height / 2 };
+  // Apply transformations around the shape's bounding box center
+  applyToContext(ctx, shapeBounds = null) {
+    // Use provided bounds or fallback to width/height
+    const bounds = shapeBounds || {
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+    };
+    const pivot = {
+      x: bounds.x + bounds.width / 2,
+      y: bounds.y + bounds.height / 2,
+    };
 
-    ctx.translate(this.x, this.y); // Move to object position
-    ctx.translate(pivot.x, pivot.y); // Move center to origin
+    // Step 1: Translate to shape's center
+    ctx.translate(pivot.x, pivot.y);
+
+    // Step 2: Apply rotation and scaling around center
     ctx.rotate((this.rotation * Math.PI) / 180);
     ctx.scale(this.scaleX, this.scaleY);
-    ctx.translate(-pivot.x, -pivot.y); // Move back
+
+    // Step 3: Move back to original coordinate system
+    ctx.translate(-pivot.x, -pivot.y);
   }
 
-  // Transform a point from local → world
-  transformPoint(point) {
-    const pivot = { x: this.width / 2, y: this.height / 2 };
+  // Transform a point from local → world with custom pivot
+  transformPoint(point, shapeBounds = null) {
+    // Use provided bounds or fallback to width/height centered at origin
+    const bounds = shapeBounds || {
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+    };
+    const pivot = {
+      x: bounds.x + bounds.width / 2,
+      y: bounds.y + bounds.height / 2,
+    };
 
-    // Convert to local coords
+    // Convert to local coords relative to pivot
     let x = point.x - pivot.x;
     let y = point.y - pivot.y;
 
@@ -50,20 +74,30 @@ class Transform {
     let rotatedX = scaledX * cos - scaledY * sin;
     let rotatedY = scaledX * sin + scaledY * cos;
 
-    // Translate back from pivot, then to world position
+    // Translate back from pivot
     return {
-      x: rotatedX + pivot.x + this.x,
-      y: rotatedY + pivot.y + this.y,
+      x: rotatedX + pivot.x,
+      y: rotatedY + pivot.y,
     };
   }
 
-  // Transform a point from world → local
-  inverseTransformPoint(point) {
-    const pivot = { x: this.width / 2, y: this.height / 2 };
+  // Transform a point from world → local with custom pivot
+  inverseTransformPoint(point, shapeBounds = null) {
+    // Use provided bounds or fallback to width/height centered at origin
+    const bounds = shapeBounds || {
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+    };
+    const pivot = {
+      x: bounds.x + bounds.width / 2,
+      y: bounds.y + bounds.height / 2,
+    };
 
     // Convert to object space
-    let x = point.x - this.x - pivot.x;
-    let y = point.y - this.y - pivot.y;
+    let x = point.x - pivot.x;
+    let y = point.y - pivot.y;
 
     // Inverse rotate
     const rad = -(this.rotation * Math.PI) / 180;

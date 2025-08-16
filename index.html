@@ -266,6 +266,10 @@
         .querySelector(".close-properties-panel")
         .addEventListener("click", () => {
           document.querySelector(".properties-panel").classList.add("hidden");
+          // Mark that user manually hid the panel
+          if (window.app) {
+            window.app.propertiesPanelManuallyHidden = true;
+          }
         });
     </script>
   </body>

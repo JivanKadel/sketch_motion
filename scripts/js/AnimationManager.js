@@ -15,6 +15,8 @@ export default class AnimationManager {
     const newFrame = new Frame();
     this.app.frames.push(newFrame);
     this.app.currentFrameIndex = this.app.frames.length - 1;
+    this.app.selectedShapes = [];
+    this.app.selectionTransformer.hideSelectionHandles();
     this.updateFramesPanel();
     this.app.renderer.render();
   }

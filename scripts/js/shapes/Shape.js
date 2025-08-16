@@ -14,7 +14,11 @@ class Shape {
   // Draws the shape on the canvas context
   draw(ctx) {
     ctx.save();
-    this.transform.applyToContext(ctx);
+    // Get current bounds and pass to transform
+    const bounds = this.getBounds();
+    this.transform.width = bounds.width;
+    this.transform.height = bounds.height;
+    this.transform.applyToContext(ctx, bounds);
     this.drawShape(ctx);
     ctx.restore();
   }
@@ -32,6 +36,16 @@ class Shape {
     // Override in subclasses
     return false;
   }
+
+  // Gets the center point of the shape based on its bounds
+  getCenter() {
+    const bounds = this.getBounds();
+    return {
+      x: bounds.x + bounds.width / 2,
+      y: bounds.y + bounds.height / 2,
+    };
+  }
+
   // get supportsPixelErasing() {
   //   return false;
   // }

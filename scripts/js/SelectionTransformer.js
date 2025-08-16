@@ -1,5 +1,3 @@
-
-
 class SelectionTransformer {
   constructor(app) {
     this.app = app;
@@ -30,14 +28,14 @@ class SelectionTransformer {
     const sy = localPoint.y * transform.scaleY;
     const rotated = this.rotatePoint(sx, sy, this.rad(transform.rotation));
     return {
-      x: rotated.x + pivotWorld.x + transform.x,
-      y: rotated.y + pivotWorld.y + transform.y,
+      x: rotated.x + pivotWorld.x,
+      y: rotated.y + pivotWorld.y,
     };
   }
 
   worldToLocal(worldPoint, transform, pivotWorld) {
-    let x = worldPoint.x - transform.x - pivotWorld.x;
-    let y = worldPoint.y - transform.y - pivotWorld.y;
+    let x = worldPoint.x - pivotWorld.x;
+    let y = worldPoint.y - pivotWorld.y;
     const inv = this.rotatePoint(x, y, -this.rad(transform.rotation));
     return {
       x: inv.x / (transform.scaleX || 1),
@@ -60,9 +58,15 @@ class SelectionTransformer {
   }
 
   showSelectionHandles() {
-    if (this.app.selectedShapes.length !== 1) return;
+    if (this.app.selectedShapes.length !== 1) {
+      this.hideSelectionHandles();
+      return;
+    }
     const shape = this.app.selectedShapes[0];
-    if (!shape) return;
+    if (!shape) {
+      this.hideSelectionHandles();
+      return;
+    }
 
     const ctx = this.app.ctx;
     const bounds = shape.getBounds();
@@ -104,9 +108,9 @@ class SelectionTransformer {
     ctx.save();
     ctx.strokeStyle = "#0078d4";
     ctx.fillStyle = "#fff";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2 / this.app.viewport.zoom; // Scale line width with zoom
 
-    const size = this.handleSize;
+    const size = this.handleSize / this.app.viewport.zoom; // Scale handle size with zoom
     transformedCorners.forEach((h) => {
       ctx.beginPath();
       ctx.rect(h.x - size / 2, h.y - size / 2, size, size);
@@ -134,8 +138,11 @@ class SelectionTransformer {
   }
 
   handleMouseDown(mousePos) {
+    if (this.app.selectedShapes.length !== 1) return;
+
     const shape = this.app.selectedShapes[0];
     if (!shape) return;
+
     const bounds = shape.getBounds();
     const pivotWorld = this.computePivot(bounds);
     const t = shape.transform;
@@ -184,8 +191,6 @@ class SelectionTransformer {
 
     // Snapshot initial state
     this.startTransform = {
-      x: t.x || 0,
-      y: t.y || 0,
       rotation: t.rotation || 0,
       scaleX: t.scaleX == null ? 1 : t.scaleX,
       scaleY: t.scaleY == null ? 1 : t.scaleY,
@@ -196,17 +201,37 @@ class SelectionTransformer {
   }
 
   handleMouseMove(mousePos) {
-    if (!this.app || !this.app.selectedShapes[0] || !this.dragMode) return;
+    if (!this.app || !this.dragMode || this.app.selectedShapes.length !== 1)
+      return;
+
     const shape = this.app.selectedShapes[0];
+    if (!shape) return;
+
     const t = shape.transform;
-    const pivot = this.pivot;
 
     if (this.dragMode === "move") {
       const dx = mousePos.x - this.startMousePos.x;
       const dy = mousePos.y - this.startMousePos.y;
-      t.x = this.startTransform.x + dx;
-      t.y = this.startTransform.y + dy;
+
+      // Move the shape's actual coordinates instead of using transform offset
+      if (shape.x !== undefined && shape.y !== undefined) {
+        shape.x += dx;
+        shape.y += dy;
+      } else if (shape.centerX !== undefined && shape.centerY !== undefined) {
+        shape.centerX += dx;
+        shape.centerY += dy;
+      } else if (shape.start && shape.end) {
+        shape.start.x += dx;
+        shape.start.y += dy;
+        shape.end.x += dx;
+        shape.end.y += dy;
+      }
+
+      // Update mouse position for next iteration
+      this.startMousePos = { x: mousePos.x, y: mousePos.y };
     } else if (this.dragMode === "rotate") {
+      // Keep the original pivot from when we started the operation
+      const pivot = this.pivot;
       const a1 = Math.atan2(
         this.startMousePos.y - pivot.y,
         this.startMousePos.x - pivot.x
@@ -215,14 +240,14 @@ class SelectionTransformer {
       const deltaDeg = ((a2 - a1) * 180) / Math.PI;
       t.rotation = this.startTransform.rotation + deltaDeg;
     } else if (this.dragMode === "scale") {
-      const startLocal = this.worldToLocal(
-        this.startMousePos,
-        this.startTransform,
-        pivot
-      );
-      const nowLocal = this.worldToLocal(mousePos, this.startTransform, pivot);
-      const startDist = Math.hypot(startLocal.x, startLocal.y) || 1;
-      const nowDist = Math.hypot(nowLocal.x, nowLocal.y);
+      // Keep the original pivot from when we started the operation
+      const pivot = this.pivot;
+      const startDist =
+        Math.hypot(
+          this.startMousePos.x - pivot.x,
+          this.startMousePos.y - pivot.y
+        ) || 1;
+      const nowDist = Math.hypot(mousePos.x - pivot.x, mousePos.y - pivot.y);
       const ratio = nowDist / startDist;
       t.scaleX = this.startTransform.scaleX * ratio;
       t.scaleY = this.startTransform.scaleY * ratio;
@@ -251,7 +276,7 @@ class SelectionTransformer {
     this.pivot = null;
   }
 
-  isInsideHandle(p, handle, size = this.handleSize) {
+  isInsideHandle(p, handle, size = this.handleSize / this.app.viewport.zoom) {
     return (
       p.x >= handle.x - size / 2 &&
       p.x <= handle.x + size / 2 &&
