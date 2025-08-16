@@ -22,7 +22,7 @@ class Transform {
 
   // Apply transformations around the shape's bounding box center
   applyToContext(ctx, shapeBounds = null) {
-    // Use provided bounds or fallback to width/height
+    // Use provided bounds if exists else use width/height
     const bounds = shapeBounds || {
       x: 0,
       y: 0,
@@ -45,9 +45,9 @@ class Transform {
     ctx.translate(-pivot.x, -pivot.y);
   }
 
-  // Transform a point from local → world with custom pivot
+  // Transform a point from local --> world with custom pivot
   transformPoint(point, shapeBounds = null) {
-    // Use provided bounds or fallback to width/height centered at origin
+    // Use provided bounds if provided else use width/height centered at origin
     const bounds = shapeBounds || {
       x: 0,
       y: 0,
@@ -59,7 +59,7 @@ class Transform {
       y: bounds.y + bounds.height / 2,
     };
 
-    // Convert to local coords relative to pivot
+    // Convert to local coordinates relative to pivot
     let x = point.x - pivot.x;
     let y = point.y - pivot.y;
 
@@ -81,9 +81,9 @@ class Transform {
     };
   }
 
-  // Transform a point from world → local with custom pivot
+  // Transform a point from world --> local with custom pivot
   inverseTransformPoint(point, shapeBounds = null) {
-    // Use provided bounds or fallback to width/height centered at origin
+    // Use provided bounds if provided else use width/height centered at origin
     const bounds = shapeBounds || {
       x: 0,
       y: 0,

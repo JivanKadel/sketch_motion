@@ -34,6 +34,7 @@ export default function showExportBackgroundDialog() {
   const title = document.createElement("h3");
   title.textContent = "Export PNG Background";
   title.style.marginTop = "0";
+  title.style.marginBottom = "16px";
   title.style.color = isDark ? "#fff" : "#222";
 
   const form = document.createElement("form");

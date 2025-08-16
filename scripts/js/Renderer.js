@@ -1,5 +1,6 @@
 import { showMessageBox } from "./helpers/messagebox.js";
 
+// Handles rendering of the canvas and shapes
 export default class Renderer {
   constructor(app) {
     this.app = app;
@@ -31,6 +32,7 @@ export default class Renderer {
     this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
   }
 
+  // Resets the viewport to the initial state
   resetZoom() {
     this.app.viewport.zoom = 1;
     this.app.viewport.x = 0;
@@ -38,6 +40,7 @@ export default class Renderer {
     this.render();
   }
 
+  // Exports the current frame as an image
   exportFrame(format, bg = "transparent") {
     if (format === "png") {
       const originalCtx = this.app.ctx;

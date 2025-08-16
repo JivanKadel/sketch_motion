@@ -7,6 +7,7 @@ import FreehandStroke from "./shapes/FreehandStroke.js";
 import DiamondShape from "./shapes/DiamondShape.js";
 import TextShape from "./shapes/TextShape.js";
 
+// Handles shape creation and management
 export default class ShapeManager {
   constructor(app) {
     this.app = app;
@@ -35,7 +36,7 @@ export default class ShapeManager {
       propertiesPanel?.classList.remove("hidden");
       this.app.propertiesPanelManuallyHidden = false; // Reset the flag
     }
-    // Otherwise, keep the panel visible by default (don't auto-hide on tool change)
+    // Keep the panel visible by default
   }
 
   handleSelectMouseDown(mousePos) {

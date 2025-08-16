@@ -1,16 +1,22 @@
 import Frame from "./Frame.js";
 
+// Class for frame and animation management
 export default class AnimationManager {
   constructor(app) {
     this.app = app;
   }
 
+  // Frame as static property
+  // New instance created in addFrame()
+  // The alias points to the Frame class
+  // Reference error if not imported (.js is imported for modules)
   static Frame = Frame;
 
   getCurrentFrame() {
     return this.app.frames[this.app.currentFrameIndex];
   }
 
+  // Add a new frame and push to frames stack
   addFrame() {
     const newFrame = new Frame();
     this.app.frames.push(newFrame);
@@ -21,6 +27,7 @@ export default class AnimationManager {
     this.app.renderer.render();
   }
 
+  // Selects the frame at index
   selectFrame(index) {
     if (index >= 0 && index < this.app.frames.length) {
       this.app.currentFrameIndex = index;
@@ -31,6 +38,7 @@ export default class AnimationManager {
     }
   }
 
+  // Updates frames panel when new is added
   updateFramesPanel() {
     const framesList = document.getElementById("framesList");
     if (!framesList) return;
@@ -55,6 +63,7 @@ export default class AnimationManager {
     });
   }
 
+  // Plays / Pauses animation
   toggleAnimation() {
     const playBtn = document.getElementById("playBtn");
     if (!playBtn) return;
@@ -81,6 +90,7 @@ export default class AnimationManager {
     }
   }
 
+  // Animates frame based on the FPS (default = 12)
   animateFrame() {
     if (!this.app.animationPlaying) return;
     const currentTime = performance.now();

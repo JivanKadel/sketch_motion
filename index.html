@@ -231,7 +231,6 @@
       }
     </script>
 
-    <!-- <script type="module" src="js/main.ts"></script> -->
     <script type="module" src="./scripts/js/main.js"></script>
     <script type="module">
       import SketchingApp from "./scripts/js/main.js";
@@ -266,7 +265,7 @@
         .querySelector(".close-properties-panel")
         .addEventListener("click", () => {
           document.querySelector(".properties-panel").classList.add("hidden");
-          // Mark that user manually hid the panel
+          // Mark that the user manually hid the panel
           if (window.app) {
             window.app.propertiesPanelManuallyHidden = true;
           }

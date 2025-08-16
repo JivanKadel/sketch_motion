@@ -11,7 +11,7 @@ class TextShape extends Shape {
   }
   // Draws the text
   drawShape(ctx) {
-    ctx.fillStyle = this.strokeColor; // Text color is determined by strokeColor
+    ctx.fillStyle = this.strokeColor; // Text color
     ctx.font = `${this.fontSize}px ${this.fontFamily}`;
     ctx.textBaseline = "top"; // Align text from the top
     ctx.fillText(this.text, this.x, this.y);

@@ -1,5 +1,5 @@
 import Transform from "../core/Transform.js";
-// Base class for all drawable shapes
+// Base class for all shapes
 class Shape {
   constructor() {
     this.id = Math.random().toString(36).substr(2, 9);
@@ -45,10 +45,6 @@ class Shape {
       y: bounds.y + bounds.height / 2,
     };
   }
-
-  // get supportsPixelErasing() {
-  //   return false;
-  // }
 
   // Creates a clone of the shape
   clone() {

@@ -1,3 +1,4 @@
+// Handles shape selection and transformation
 class SelectionTransformer {
   constructor(app) {
     this.app = app;
@@ -9,11 +10,12 @@ class SelectionTransformer {
     this.handleSize = 10;
   }
 
-  // ---- Math helpers (no dependency on shape.transform methods) ----
+  // Converts degrees to radians
   rad(deg) {
     return (deg * Math.PI) / 180;
   }
 
+  // Rotates a point around the origin
   rotatePoint(x, y, rad) {
     const c = Math.cos(rad);
     const s = Math.sin(rad);
@@ -23,6 +25,7 @@ class SelectionTransformer {
     };
   }
 
+  // Converts local point to world coordinates
   localToWorld(localPoint, transform, pivotWorld) {
     const sx = localPoint.x * transform.scaleX;
     const sy = localPoint.y * transform.scaleY;
@@ -33,6 +36,7 @@ class SelectionTransformer {
     };
   }
 
+  // Converts world coordinates to local point
   worldToLocal(worldPoint, transform, pivotWorld) {
     let x = worldPoint.x - pivotWorld.x;
     let y = worldPoint.y - pivotWorld.y;
@@ -43,6 +47,7 @@ class SelectionTransformer {
     };
   }
 
+  // Computes the pivot point for rotation and scaling
   computePivot(bounds) {
     return {
       x: bounds.x + bounds.width / 2,
@@ -50,6 +55,7 @@ class SelectionTransformer {
     };
   }
 
+  // Hides the selection handles
   hideSelectionHandles() {
     const selectionHandles = document.getElementById("selectionHandles");
     if (selectionHandles) {
@@ -57,6 +63,7 @@ class SelectionTransformer {
     }
   }
 
+  // Shows the selection handles
   showSelectionHandles() {
     if (this.app.selectedShapes.length !== 1) {
       this.hideSelectionHandles();
@@ -68,11 +75,13 @@ class SelectionTransformer {
       return;
     }
 
+    // Get the canvas context and shape bounds
     const ctx = this.app.ctx;
     const bounds = shape.getBounds();
     const pivotWorld = this.computePivot(bounds);
     const t = shape.transform;
 
+    // Get the local corners of the shape
     const cornersLocal = [
       { x: bounds.x - pivotWorld.x, y: bounds.y - pivotWorld.y }, // top-left
       { x: bounds.x + bounds.width - pivotWorld.x, y: bounds.y - pivotWorld.y }, // top-right
@@ -86,6 +95,7 @@ class SelectionTransformer {
       }, // bottom-right
     ];
 
+    // Transform local corners to world coordinates
     const transformedCorners = cornersLocal.map((lp) =>
       this.localToWorld(lp, t, pivotWorld)
     );
@@ -276,6 +286,7 @@ class SelectionTransformer {
     this.pivot = null;
   }
 
+  // Checks if a point is inside a handle
   isInsideHandle(p, handle, size = this.handleSize / this.app.viewport.zoom) {
     return (
       p.x >= handle.x - size / 2 &&

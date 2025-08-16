@@ -46,6 +46,8 @@ export default class SketchingApp {
     this.animationManager.updateFramesPanel();
   }
 
+  // Methods from other classes
+  // For easy method calls from html file
   addFrame() {
     this.animationManager.addFrame();
   }

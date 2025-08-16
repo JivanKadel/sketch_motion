@@ -1,4 +1,4 @@
-import LineShape from "./LineShape.js"; 
+import LineShape from "./LineShape.js";
 // Represents an arrow shape
 class ArrowShape extends LineShape {
   constructor(start, end) {
@@ -44,7 +44,7 @@ class ArrowShape extends LineShape {
     const maxY = Math.max(this.start.y, this.end.y) + this.headSize;
     return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
   }
-  // Checks if a point is contained within the arrow (line segment + arrowhead consideration)
+  // Checks if a point is contained within the arrow (line segment + arrowhead considered)
   containsPoint(point) {
     return (
       this.distanceToLine(point, this.start, this.end) <=

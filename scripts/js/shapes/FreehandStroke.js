@@ -9,7 +9,7 @@ class FreehandStroke extends Shape {
     this.smoothingEpsilon = smoothingEpsilon;
     this.smoothingEnabled = smoothingEnabled;
   }
-  // Adds a point to the stroke and re-smoothes it
+  // Adds a point to the stroke and re-smooths it
   addPoint(point) {
     this.points.push(point);
     if (this.smoothingEnabled) {

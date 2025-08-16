@@ -3,11 +3,13 @@ import FreehandStroke from "./shapes/FreehandStroke.js";
 import ImageShape from "./shapes/ImageShape.js";
 import { showMessageBox } from "./helpers/messagebox.js";
 
+// Handles user interactions and events
 export default class EventHandler {
   constructor(app) {
     this.app = app;
   }
 
+  // Sets up event listeners for user interactions
   setupEventListeners() {
     this.app.canvas.addEventListener("mousedown", (e) => {
       const pos = this.getMousePos(e);
@@ -47,6 +49,7 @@ export default class EventHandler {
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
   }
 
+  // Sets up property controls for shape customization
   setupPropertyControls() {
     const strokeColor = document.getElementById("strokeColor");
     const strokeColorPreview = document.getElementById("strokeColorPreview");
@@ -207,6 +210,7 @@ export default class EventHandler {
     }
   }
 
+  // Handles image upload and creates an ImageShape
   handleImageUpload(e) {
     const fileInput = e.target;
     const file = fileInput.files?.[0];
@@ -217,6 +221,7 @@ export default class EventHandler {
         if (!imageData) return;
         const img = new window.Image();
         img.onload = () => {
+          // Preserve aspect ratio
           const aspectRatio = img.width / img.height;
           const fixedWidth = 200;
           const proportionalHeight = fixedWidth / aspectRatio;
