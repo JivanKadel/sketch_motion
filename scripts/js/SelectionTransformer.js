@@ -195,8 +195,16 @@ class SelectionTransformer {
         ? topRightWorld
         : bottomRightLocalWorld;
     } else {
-      this.dragMode = "move";
-      this.activeHandle = null;
+      // Check if click is inside the shape bounds
+      const localMousePos = this.worldToLocal(mousePos, t, pivotWorld);
+      if (shape.containsPoint && shape.containsPoint(localMousePos)) {
+        this.dragMode = "move";
+        this.activeHandle = null;
+      } else {
+        // Click is outside shape - let ShapeManager handle selection
+        this.app.shapeManager.handleSelectMouseDown(mousePos);
+        return;
+      }
     }
 
     // Snapshot initial state
@@ -205,6 +213,17 @@ class SelectionTransformer {
       scaleX: t.scaleX == null ? 1 : t.scaleX,
       scaleY: t.scaleY == null ? 1 : t.scaleY,
     };
+
+    // Store original positions for freehand strokes
+    if (shape.points && Array.isArray(shape.points)) {
+      this.originalPoints = shape.points.map((pt) => ({ x: pt.x, y: pt.y }));
+      if (shape.smoothedPoints && Array.isArray(shape.smoothedPoints)) {
+        this.originalSmoothedPoints = shape.smoothedPoints.map((pt) => ({
+          x: pt.x,
+          y: pt.y,
+        }));
+      }
+    }
 
     this.startMousePos = { x: mousePos.x, y: mousePos.y };
     this.pivot = pivotWorld;
@@ -235,6 +254,25 @@ class SelectionTransformer {
         shape.start.y += dy;
         shape.end.x += dx;
         shape.end.y += dy;
+      } else if (shape.points && Array.isArray(shape.points)) {
+        // Move all points for freehand strokes using absolute positioning from original
+        if (this.originalPoints) {
+          shape.points = this.originalPoints.map((pt) => ({
+            x: pt.x + dx,
+            y: pt.y + dy,
+          }));
+        }
+        // Also update smoothed points for freehand strokes
+        if (
+          shape.smoothedPoints &&
+          Array.isArray(shape.smoothedPoints) &&
+          this.originalSmoothedPoints
+        ) {
+          shape.smoothedPoints = this.originalSmoothedPoints.map((pt) => ({
+            x: pt.x + dx,
+            y: pt.y + dy,
+          }));
+        }
       }
 
       // Update mouse position for next iteration
@@ -284,6 +322,9 @@ class SelectionTransformer {
     this.startMousePos = null;
     this.startTransform = null;
     this.pivot = null;
+    // Clean up stored original positions
+    this.originalPoints = null;
+    this.originalSmoothedPoints = null;
   }
 
   // Checks if a point is inside a handle

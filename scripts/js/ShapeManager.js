@@ -41,15 +41,14 @@ export default class ShapeManager {
 
   handleSelectMouseDown(mousePos) {
     const clickedShape = this.getShapeAtPoint(mousePos);
-
-    if (!clickedShape) {
+    if (clickedShape) {
+      // Always select the clicked shape, even if another is selected
+      this.app.selectedShapes = [clickedShape];
+      this.app.selectionTransformer.showSelectionHandles();
+    } else {
+      // Deselect all if clicked empty space
       this.app.selectedShapes = [];
       this.app.selectionTransformer.hideSelectionHandles();
-    } else {
-      if (!this.app.selectedShapes.includes(clickedShape)) {
-        this.app.selectedShapes = [clickedShape];
-      }
-      this.app.selectionTransformer.showSelectionHandles();
     }
     this.app.renderer.render();
   }
@@ -72,6 +71,12 @@ export default class ShapeManager {
           shape.start.y += dy;
           shape.end.x += dx;
           shape.end.y += dy;
+        } else if (shape.points && Array.isArray(shape.points)) {
+          // Move all points for freehand strokes
+          shape.points = shape.points.map((pt) => ({
+            x: pt.x + dx,
+            y: pt.y + dy,
+          }));
         }
       });
 
