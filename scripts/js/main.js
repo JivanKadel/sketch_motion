@@ -40,6 +40,7 @@ export default class SketchingApp {
     this.animationManager = new AnimationManager(this);
     this.renderer = new Renderer(this);
 
+    this.onionSkinEnabled = false;
     this.eventHandler.setupEventListeners();
     this.uiSetup.setupUI();
     this.renderer.render();

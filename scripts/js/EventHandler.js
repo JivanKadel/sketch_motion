@@ -51,6 +51,11 @@ export default class EventHandler {
 
   // Sets up property controls for shape customization
   setupPropertyControls() {
+    const onionSkinCheckbox = document.getElementById("onionSkinEnabled");
+    onionSkinCheckbox.addEventListener("change", (e) => {
+      this.app.onionSkinEnabled = e.target.checked;
+      this.app.renderer.render();
+    });
     const strokeColor = document.getElementById("strokeColor");
     const strokeColorPreview = document.getElementById("strokeColorPreview");
     const strokeWidth = document.getElementById("strokeWidth");

@@ -18,7 +18,6 @@ class Frame {
   }
   // Draws all shapes in the frame onto the given canvas context
   draw(ctx) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear the canvas
     for (const shape of this.shapes) {
       if (shape.visible) {
         shape.draw(ctx);

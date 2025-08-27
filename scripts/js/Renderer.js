@@ -6,33 +6,106 @@ export default class Renderer {
     this.app = app;
   }
 
+  // render() {
+  //   this.app.ctx.save();
+  //   this.app.ctx.clearRect(0, 0, this.app.canvas.width, this.app.canvas.height);
+
+  //   this.app.ctx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
+  //   this.app.ctx.translate(this.app.viewport.x, this.app.viewport.y);
+
+  //   // Onion skinning: show previous/next frames if enabled and not exporting
+  //   if (this.app.onionSkinEnabled && !this.app.isExporting) {
+  //     // Previous frame
+  //     if (this.app.currentFrameIndex > 0) {
+  //       this.app.ctx.save();
+  //       this.app.ctx.globalAlpha = 0.3;
+  //       this.app.frames[this.app.currentFrameIndex - 1].draw(this.app.ctx);
+  //       this.app.ctx.restore();
+  //     }
+  //     // Next frame
+  //     if (this.app.currentFrameIndex < this.app.frames.length - 1) {
+  //       this.app.ctx.save();
+  //       this.app.ctx.globalAlpha = 0.3;
+  //       this.app.frames[this.app.currentFrameIndex + 1].draw(this.app.ctx);
+  //       this.app.ctx.restore();
+  //     }
+  //   }
+
+  //   // Draw current frame
+  //   this.app.getCurrentFrame().draw(this.app.ctx);
+
+  //   if (this.app.currentShape) {
+  //     this.app.currentShape.draw(this.app.ctx);
+  //   }
+
+  //   this.app.ctx.restore();
+
+  //   // Only show selection handles when in select mode and shapes are selected
+  //   if (
+  //     this.app.currentTool === "select" &&
+  //     this.app.selectedShapes.length > 0
+  //   ) {
+  //     this.app.selectionTransformer.showSelectionHandles(this.app.ctx);
+  //   }
+
+  //   this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
+  // }
+
+  // Resets the viewport to the initial state
   render() {
-    this.app.ctx.save();
-    this.app.ctx.clearRect(0, 0, this.app.canvas.width, this.app.canvas.height);
+    const ctx = this.app.ctx;
+    ctx.save();
 
-    this.app.ctx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
-    this.app.ctx.translate(this.app.viewport.x, this.app.viewport.y);
-
-    this.app.getCurrentFrame().draw(this.app.ctx);
-
-    if (this.app.currentShape) {
-      this.app.currentShape.draw(this.app.ctx);
+    // Always start with a background when exporting
+    if (this.app.isExporting) {
+      ctx.fillStyle = "#ffffff"; // white, or any background color you want
+      ctx.fillRect(0, 0, this.app.canvas.width, this.app.canvas.height);
+    } else {
+      ctx.clearRect(0, 0, this.app.canvas.width, this.app.canvas.height);
     }
 
-    this.app.ctx.restore();
+    ctx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
+    ctx.translate(this.app.viewport.x, this.app.viewport.y);
 
-    // Only show selection handles when in select mode and shapes are selected
+    // Onion skinning only when not exporting
+    if (this.app.onionSkinEnabled && !this.app.isExporting) {
+      if (this.app.currentFrameIndex > 0) {
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        this.app.frames[this.app.currentFrameIndex - 1].draw(ctx);
+        ctx.restore();
+      }
+      if (this.app.currentFrameIndex < this.app.frames.length - 1) {
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        this.app.frames[this.app.currentFrameIndex + 1].draw(ctx);
+        ctx.restore();
+      }
+    }
+
+    // Draw current frame
+    this.app.getCurrentFrame().draw(ctx);
+
+    if (this.app.currentShape) {
+      this.app.currentShape.draw(ctx);
+    }
+
+    ctx.restore();
+
+    // Selection handles only when not exporting
     if (
+      !this.app.isExporting &&
       this.app.currentTool === "select" &&
       this.app.selectedShapes.length > 0
     ) {
-      this.app.selectionTransformer.showSelectionHandles(this.app.ctx);
+      this.app.selectionTransformer.showSelectionHandles(ctx);
     }
 
-    this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
+    if (!this.app.isExporting) {
+      this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
+    }
   }
 
-  // Resets the viewport to the initial state
   resetZoom() {
     this.app.viewport.zoom = 1;
     this.app.viewport.x = 0;
@@ -62,8 +135,10 @@ export default class Renderer {
       exportCtx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
       exportCtx.translate(this.app.viewport.x, this.app.viewport.y);
 
-      // Draw all shapes
+      // Draw all shapes (disable onion skinning during export)
+      this.app.isExporting = true;
       this.app.getCurrentFrame().draw(exportCtx);
+      this.app.isExporting = false;
 
       exportCtx.restore();
 
@@ -82,31 +157,28 @@ export default class Renderer {
     }
   }
 
-  exportAnimation() {
-    // Check if MediaRecorder and canvas.captureStream are supported
+  async exportAnimation() {
     if (!this.app.canvas.captureStream || !window.MediaRecorder) {
-      showMessageBox(
-        "Video export is not supported in this browser. Please use a modern browser with MediaRecorder and CanvasCaptureMediaStream support."
-      );
+      showMessageBox("Video export not supported in this browser.");
       return;
     }
-    this.app.fps = parseInt(document.getElementById("fpsInput").value);
 
-    // Set up the canvas stream
-    const stream = this.app.canvas.captureStream(this.app.fps);
+    const fps = parseInt(document.getElementById("fpsInput").value) || 30;
+    const stream = this.app.canvas.captureStream(fps);
+
     const recordedChunks = [];
     const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "video/webm",
+      mimeType: MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+        ? "video/webm;codecs=vp9"
+        : "video/webm;codecs=vp8",
     });
 
-    // Handle data as it's recorded
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
         recordedChunks.push(event.data);
       }
     };
 
-    // When recording stops, create a downloadable video
     mediaRecorder.onstop = () => {
       const blob = new Blob(recordedChunks, { type: "video/webm" });
       const url = URL.createObjectURL(blob);
@@ -117,31 +189,35 @@ export default class Renderer {
       URL.revokeObjectURL(url);
     };
 
-    // Start recording
     mediaRecorder.start();
 
-    // Play through each frame
     let frameIndex = 0;
-    const frameDuration = 1000 / this.app.fps; // Duration per frame in milliseconds
+    const totalFrames = this.app.frames.length;
+    const frameDuration = 1000 / fps;
 
-    const playNextFrame = () => {
-      if (frameIndex >= this.app.frames.length) {
-        mediaRecorder.stop();
+    const ctx = this.app.ctx;
+    const canvas = this.app.canvas;
+
+    const renderNextFrame = () => {
+      if (frameIndex >= totalFrames) {
+        // wait a bit before stopping, to flush buffer
+        setTimeout(() => mediaRecorder.stop(), 300);
         return;
       }
 
-      // Set current frame and render
-      this.app.currentFrameIndex = frameIndex;
-      this.render();
+      // ✅ Always clear + paint a background (no transparency!)
+      ctx.fillStyle = "#ffffff"; // or any bg color
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Move to next frame after the appropriate duration
-      setTimeout(() => {
-        frameIndex++;
-        playNextFrame();
-      }, frameDuration);
+      this.app.isExporting = true;
+      this.app.currentFrameIndex = frameIndex;
+      this.render(); // ✅ must draw on *this.app.canvas*
+      this.app.isExporting = false;
+
+      frameIndex++;
+      setTimeout(renderNextFrame, frameDuration);
     };
 
-    // Start the frame sequence
-    playNextFrame();
+    renderNextFrame();
   }
 }
