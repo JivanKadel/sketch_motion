@@ -183,8 +183,19 @@
 
       <!-- Frames Panel -->
       <div class="frames-panel" id="framesPanel">
-        <div class="frames-list-wrapper">
-          <div id="framesList"></div>
+        <div
+          class="frames-list-wrapper"
+          style="flex: 1; overflow-x: auto; display: flex; align-items: center"
+        >
+          <div
+            id="framesList"
+            style="
+              display: flex;
+              flex-direction: row;
+              gap: 10px;
+              align-items: center;
+            "
+          ></div>
         </div>
         <div class="add-frame-btn" id="addFrameBtn" onclick="app.addFrame()">
           +

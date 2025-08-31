@@ -164,16 +164,22 @@ body {
   gap: 10px;
 }
 
-.frameList {
+.frames-list-wrapper {
+  flex: 1;
+  overflow-x: auto;
   display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* Show scrollbar when needed */
-  gap: 10px;
-  padding: 5px;
-  margin-bottom: 5px;
-  max-height: 100%; /* Take full height of parent */
-  position: relative;
+  align-items: center;
+  height: 100%;
 }
+
+#framesList {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  height: 100%;
+}
+
 .frame-thumbnail {
   width: 80px;
   height: 60px;

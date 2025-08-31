@@ -6,6 +6,7 @@ import AnimationManager from "./AnimationManager.js";
 import Renderer from "./Renderer.js";
 import SelectionTransformer from "./SelectionTransformer.js";
 import showExportBackgroundDialog from "./helpers/exportformat.js";
+import { showMessageBox } from "./helpers/messagebox.js";
 
 // Main application class for the sketching and animation app
 export default class SketchingApp {
@@ -79,6 +80,12 @@ export default class SketchingApp {
   }
 
   exportFrame(format) {
+    if (format === "svg") {
+      showMessageBox(
+        "SVG export functionality needs to be implemented with SVG serialization."
+      );
+      return;
+    }
     showExportBackgroundDialog().then(({ bg, cancelled }) => {
       if (!cancelled) {
         // Export using bg ('transparent' or 'white')
