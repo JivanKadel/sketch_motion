@@ -6,59 +6,13 @@ export default class Renderer {
     this.app = app;
   }
 
-  // render() {
-  //   this.app.ctx.save();
-  //   this.app.ctx.clearRect(0, 0, this.app.canvas.width, this.app.canvas.height);
-
-  //   this.app.ctx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
-  //   this.app.ctx.translate(this.app.viewport.x, this.app.viewport.y);
-
-  //   // Onion skinning: show previous/next frames if enabled and not exporting
-  //   if (this.app.onionSkinEnabled && !this.app.isExporting) {
-  //     // Previous frame
-  //     if (this.app.currentFrameIndex > 0) {
-  //       this.app.ctx.save();
-  //       this.app.ctx.globalAlpha = 0.3;
-  //       this.app.frames[this.app.currentFrameIndex - 1].draw(this.app.ctx);
-  //       this.app.ctx.restore();
-  //     }
-  //     // Next frame
-  //     if (this.app.currentFrameIndex < this.app.frames.length - 1) {
-  //       this.app.ctx.save();
-  //       this.app.ctx.globalAlpha = 0.3;
-  //       this.app.frames[this.app.currentFrameIndex + 1].draw(this.app.ctx);
-  //       this.app.ctx.restore();
-  //     }
-  //   }
-
-  //   // Draw current frame
-  //   this.app.getCurrentFrame().draw(this.app.ctx);
-
-  //   if (this.app.currentShape) {
-  //     this.app.currentShape.draw(this.app.ctx);
-  //   }
-
-  //   this.app.ctx.restore();
-
-  //   // Only show selection handles when in select mode and shapes are selected
-  //   if (
-  //     this.app.currentTool === "select" &&
-  //     this.app.selectedShapes.length > 0
-  //   ) {
-  //     this.app.selectionTransformer.showSelectionHandles(this.app.ctx);
-  //   }
-
-  //   this.app.getCurrentFrame().generateThumbnail(this.app.canvas);
-  // }
-
-  // Resets the viewport to the initial state
   render() {
     const ctx = this.app.ctx;
     ctx.save();
 
     // Always start with a background when exporting
     if (this.app.isExporting) {
-      ctx.fillStyle = "#ffffff"; // white, or any background color you want
+      ctx.fillStyle = "#ffffff"; // white, or any background color
       ctx.fillRect(0, 0, this.app.canvas.width, this.app.canvas.height);
     } else {
       ctx.clearRect(0, 0, this.app.canvas.width, this.app.canvas.height);
@@ -125,7 +79,7 @@ export default class Renderer {
       exportCanvas.height = canvas.height;
       const exportCtx = exportCanvas.getContext("2d");
 
-      // Optional: apply same zoom/pan if needed
+      // Apply same zoom/pan if needed (optional)
       exportCtx.save();
       if (bg === "white") {
         exportCtx.fillStyle = "#fff";
@@ -135,7 +89,7 @@ export default class Renderer {
       exportCtx.scale(this.app.viewport.zoom, this.app.viewport.zoom);
       exportCtx.translate(this.app.viewport.x, this.app.viewport.y);
 
-      // Draw all shapes (disable onion skinning during export)
+      // Draw all shapes (disabled onion skinning during export)
       this.app.isExporting = true;
       this.app.getCurrentFrame().draw(exportCtx);
       this.app.isExporting = false;
@@ -205,13 +159,13 @@ export default class Renderer {
         return;
       }
 
-      // ✅ Always clear + paint a background (no transparency!)
+      // Clear and paint a background for no transparency
       ctx.fillStyle = "#ffffff"; // or any bg color
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       this.app.isExporting = true;
       this.app.currentFrameIndex = frameIndex;
-      this.render(); // ✅ must draw on *this.app.canvas*
+      this.render(); // Draw on *this.app.canvas*
       this.app.isExporting = false;
 
       frameIndex++;

@@ -53,7 +53,6 @@ class ImageShape extends Shape {
     img.src = this.src;
     img.transform = this.transform ? this.transform.clone() : null;
     img.visible = this.visible;
-    // ...copy any other relevant properties...
     return img;
   }
 }

@@ -213,7 +213,7 @@ class SelectionTransformer {
       }
     }
 
-    // Snapshot initial state
+    // Snapshot of initial state
     this.startTransform = {
       rotation: t.rotation || 0,
       scaleX: t.scaleX == null ? 1 : t.scaleX,

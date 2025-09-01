@@ -1,5 +1,4 @@
 export function showMessageBox(message) {
-  // Simple modal implementation for demonstration
   const modal = document.createElement("div");
   modal.style.cssText = `
       position: fixed;

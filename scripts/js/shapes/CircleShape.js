@@ -46,7 +46,6 @@ class CircleShape extends Shape {
     circle.fillEnabled = this.fillEnabled;
     circle.transform = this.transform ? this.transform.clone() : null;
     circle.visible = this.visible;
-    // ...copy any other relevant properties...
     return circle;
   }
 }

@@ -14,7 +14,7 @@ class Shape {
   // Draws the shape on the canvas context
   draw(ctx) {
     ctx.save();
-    // Get current bounds and pass to transform
+    // Gets current bounds and pass to transform
     const bounds = this.getBounds();
     this.transform.width = bounds.width;
     this.transform.height = bounds.height;

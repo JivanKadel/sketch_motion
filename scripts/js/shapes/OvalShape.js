@@ -55,7 +55,6 @@ class OvalShape extends Shape {
     oval.fillEnabled = this.fillEnabled;
     oval.transform = this.transform ? this.transform.clone() : null;
     oval.visible = this.visible;
-    // ...copy any other relevant properties...
     return oval;
   }
 }

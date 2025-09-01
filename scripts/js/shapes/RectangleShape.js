@@ -48,7 +48,6 @@ class RectangleShape extends Shape {
     rect.fillEnabled = this.fillEnabled;
     rect.transform = this.transform ? this.transform.clone() : null;
     rect.visible = this.visible;
-    // ...copy any other relevant properties...
     return rect;
   }
 }

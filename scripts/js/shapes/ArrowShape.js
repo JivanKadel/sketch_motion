@@ -62,7 +62,6 @@ class ArrowShape extends LineShape {
     arrow.arrowHeadSize = this.arrowHeadSize;
     arrow.transform = this.transform ? this.transform.clone() : null;
     arrow.visible = this.visible;
-    // ...copy any other relevant properties...
     return arrow;
   }
 }

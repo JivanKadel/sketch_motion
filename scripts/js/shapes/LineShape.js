@@ -61,7 +61,6 @@ class LineShape extends Shape {
     line.strokeWidth = this.strokeWidth;
     line.transform = this.transform ? this.transform.clone() : null;
     line.visible = this.visible;
-    // ...copy any other relevant properties...
     return line;
   }
 }

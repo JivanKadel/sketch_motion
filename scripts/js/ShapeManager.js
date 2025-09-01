@@ -20,7 +20,7 @@ export default class ShapeManager {
       .forEach((btn) => btn.classList.remove("active"));
     document.querySelector(`[data-tool="${tool}"]`)?.classList.add("active");
 
-    // Always clear selection when changing tools
+    // Clear selection when changing tools
     this.app.selectedShapes = [];
     this.app.selectionTransformer.hideSelectionHandles();
     this.app.renderer.render();
@@ -34,9 +34,8 @@ export default class ShapeManager {
     if (tool === "select" && this.app.propertiesPanelManuallyHidden) {
       // Show panel in select mode if it was manually hidden
       propertiesPanel?.classList.remove("hidden");
-      this.app.propertiesPanelManuallyHidden = false; // Reset the flag
+      this.app.propertiesPanelManuallyHidden = false; // Reset the panel visibility flag
     }
-    // Keep the panel visible by default
   }
 
   handleSelectMouseDown(mousePos) {

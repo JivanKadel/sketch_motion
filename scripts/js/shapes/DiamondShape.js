@@ -53,7 +53,6 @@ class DiamondShape extends Shape {
     diamond.fillEnabled = this.fillEnabled;
     diamond.transform = this.transform ? this.transform.clone() : null;
     diamond.visible = this.visible;
-    // ...copy any other relevant properties...
     return diamond;
   }
 }
