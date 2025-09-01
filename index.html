@@ -179,6 +179,11 @@
             <input type="checkbox" id="onionSkinEnabled" />
           </div>
         </div>
+        <div class="property-group">
+          <div class="property-row">
+            <button id="resetZoomBtn">Reset zoom</button>
+          </div>
+        </div>
       </div>
 
       <!-- Frames Panel -->
@@ -228,6 +233,11 @@
       const smoothingEpsilonValue = document.getElementById(
         "smoothingEpsilonValue"
       );
+
+      const resetZoomBtn = document.getElementById("resetZoomBtn");
+      resetZoomBtn.addEventListener("click", () => {
+        app.resetZoom();
+      });
 
       smoothingEnabled.addEventListener("change", () => {
         if (smoothingEnabled.checked) {
