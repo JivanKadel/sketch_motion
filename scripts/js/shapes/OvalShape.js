@@ -43,5 +43,20 @@ class OvalShape extends Shape {
     const dy = (point.y - this.centerY) / this.radiusY;
     return dx * dx + dy * dy <= 1;
   }
+  clone() {
+    const oval = new OvalShape();
+    oval.centerX = this.centerX + 10;
+    oval.centerY = this.centerY;
+    oval.radiusX = this.radiusX;
+    oval.radiusY = this.radiusY;
+    oval.strokeColor = this.strokeColor;
+    oval.strokeWidth = this.strokeWidth;
+    oval.fillColor = this.fillColor;
+    oval.fillEnabled = this.fillEnabled;
+    oval.transform = this.transform ? this.transform.clone() : null;
+    oval.visible = this.visible;
+    // ...copy any other relevant properties...
+    return oval;
+  }
 }
 export default OvalShape;

@@ -35,5 +35,19 @@ class CircleShape extends Shape {
     );
     return distance <= this.radius;
   }
+  clone() {
+    const circle = new CircleShape();
+    circle.centerX = this.centerX + 10;
+    circle.centerY = this.centerY;
+    circle.radius = this.radius;
+    circle.strokeColor = this.strokeColor;
+    circle.strokeWidth = this.strokeWidth;
+    circle.fillColor = this.fillColor;
+    circle.fillEnabled = this.fillEnabled;
+    circle.transform = this.transform ? this.transform.clone() : null;
+    circle.visible = this.visible;
+    // ...copy any other relevant properties...
+    return circle;
+  }
 }
 export default CircleShape;

@@ -51,5 +51,19 @@ class ArrowShape extends LineShape {
       this.strokeWidth / 2 + 3
     );
   }
+  clone() {
+    const arrow = new ArrowShape();
+    arrow.x1 = this.x1 + 10;
+    arrow.y1 = this.y1;
+    arrow.x2 = this.x2 + 10;
+    arrow.y2 = this.y2;
+    arrow.strokeColor = this.strokeColor;
+    arrow.strokeWidth = this.strokeWidth;
+    arrow.arrowHeadSize = this.arrowHeadSize;
+    arrow.transform = this.transform ? this.transform.clone() : null;
+    arrow.visible = this.visible;
+    // ...copy any other relevant properties...
+    return arrow;
+  }
 }
 export default ArrowShape;

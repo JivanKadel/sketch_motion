@@ -36,5 +36,20 @@ class RectangleShape extends Shape {
       point.y <= this.y + this.height
     );
   }
+  clone() {
+    const rect = new RectangleShape();
+    rect.x = this.x + 10;
+    rect.y = this.y;
+    rect.width = this.width;
+    rect.height = this.height;
+    rect.strokeColor = this.strokeColor;
+    rect.strokeWidth = this.strokeWidth;
+    rect.fillColor = this.fillColor;
+    rect.fillEnabled = this.fillEnabled;
+    rect.transform = this.transform ? this.transform.clone() : null;
+    rect.visible = this.visible;
+    // ...copy any other relevant properties...
+    return rect;
+  }
 }
 export default RectangleShape;

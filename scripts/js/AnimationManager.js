@@ -18,7 +18,14 @@ export default class AnimationManager {
 
   // Add a new frame and push to frames stack
   addFrame() {
-    const newFrame = new Frame();
+    // Clone the current frame if it exists
+    let newFrame;
+    if (this.app.frames.length > 0) {
+      const currentFrame = this.getCurrentFrame();
+      newFrame = currentFrame.clone();
+    } else {
+      newFrame = new Frame();
+    }
     this.app.frames.push(newFrame);
     this.app.currentFrameIndex = this.app.frames.length - 1;
     this.app.selectedShapes = [];

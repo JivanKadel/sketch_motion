@@ -11,7 +11,9 @@ class FreehandStroke extends Shape {
   }
   // Adds a point to the stroke and re-smooths it
   addPoint(point) {
-    this.points.push(point);
+    // Always store as Point instance
+    const pt = point instanceof Point ? point : new Point(point.x, point.y);
+    this.points.push(pt);
     if (this.smoothingEnabled) {
       const epsilon =
         typeof this.smoothingEpsilon === "number" &&
@@ -125,6 +127,31 @@ class FreehandStroke extends Shape {
       if (dist <= this.strokeWidth / 2 + 3) return true;
     }
     return false;
+  }
+  clone() {
+    const stroke = new FreehandStroke(
+      this.smoothingEpsilon,
+      this.smoothingEnabled
+    );
+    stroke.points = this.points
+      ? this.points.map((pt) => new Point(pt.x + 10, pt.y))
+      : [];
+    // Recompute smoothedPoints based on cloned points and smoothing settings
+    if (stroke.smoothingEnabled) {
+      const epsilon =
+        typeof stroke.smoothingEpsilon === "number" &&
+        !isNaN(stroke.smoothingEpsilon) &&
+        stroke.smoothingEpsilon > 0
+          ? stroke.smoothingEpsilon
+          : 2;
+      stroke.smoothedPoints = stroke.douglasPeucker(stroke.points, epsilon);
+    } else {
+      stroke.smoothedPoints = [...stroke.points];
+    }
+    stroke.strokeColor = this.strokeColor;
+    stroke.strokeWidth = this.strokeWidth;
+    stroke.transform = this.transform ? this.transform.clone() : null;
+    return stroke;
   }
 }
 export default FreehandStroke;

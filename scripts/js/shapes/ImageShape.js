@@ -42,5 +42,19 @@ class ImageShape extends Shape {
       point.y <= this.y + this.height
     );
   }
+
+  clone() {
+    const img = new ImageShape();
+    img.x = this.x + 10;
+    img.y = this.y;
+    img.width = this.width;
+    img.height = this.height;
+    img.image = this.image;
+    img.src = this.src;
+    img.transform = this.transform ? this.transform.clone() : null;
+    img.visible = this.visible;
+    // ...copy any other relevant properties...
+    return img;
+  }
 }
 export default ImageShape;

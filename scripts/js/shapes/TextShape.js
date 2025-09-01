@@ -33,5 +33,19 @@ class TextShape extends Shape {
       point.y <= bounds.y + bounds.height
     );
   }
+  clone() {
+    const text = new TextShape();
+    text.x = this.x + 10;
+    text.y = this.y;
+    text.text = this.text;
+    text.font = this.font;
+    text.fontSize = this.fontSize;
+    text.color = this.color;
+    text.align = this.align;
+    text.baseline = this.baseline;
+    text.transform = this.transform ? this.transform.clone() : null;
+    text.visible = this.visible;
+    return text;
+  }
 }
 export default TextShape;

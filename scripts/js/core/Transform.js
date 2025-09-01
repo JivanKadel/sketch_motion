@@ -20,6 +20,18 @@ class Transform {
     this.scaleY = s;
   }
 
+  clone() {
+    const t = new Transform();
+    t.translateX = this.translateX;
+    t.translateY = this.translateY;
+    t.scaleX = this.scaleX;
+    t.scaleY = this.scaleY;
+    t.rotation = this.rotation;
+    t.width = this.width;
+    t.height = this.height;
+    return t;
+  }
+
   // Apply transformations around the shape's bounding box center
   applyToContext(ctx, shapeBounds = null) {
     // Use provided bounds if exists else use width/height

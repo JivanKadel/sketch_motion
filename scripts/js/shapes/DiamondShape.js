@@ -41,5 +41,20 @@ class DiamondShape extends Shape {
     const dy = Math.abs(point.y - this.centerY);
     return dx / (this.width / 2) + dy / (this.height / 2) <= 1;
   }
+  clone() {
+    const diamond = new DiamondShape();
+    diamond.centerX = this.centerX + 10;
+    diamond.centerY = this.centerY;
+    diamond.width = this.width;
+    diamond.height = this.height;
+    diamond.strokeColor = this.strokeColor;
+    diamond.strokeWidth = this.strokeWidth;
+    diamond.fillColor = this.fillColor;
+    diamond.fillEnabled = this.fillEnabled;
+    diamond.transform = this.transform ? this.transform.clone() : null;
+    diamond.visible = this.visible;
+    // ...copy any other relevant properties...
+    return diamond;
+  }
 }
 export default DiamondShape;
