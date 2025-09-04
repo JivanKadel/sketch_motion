@@ -184,6 +184,25 @@
             <button id="resetZoomBtn">Reset zoom</button>
           </div>
         </div>
+
+        <!-- Theme Toggle -->
+        <div class="property-group" style="margin-bottom: 0">
+          <div class="property-row" style="justify-content: center">
+            <button
+              id="themeToggleBtn"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 16px;
+              "
+            >
+              <span id="themeIcon" style="font-size: 20px">🌙</span>
+              <span id="themeText">Dark Mode</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Frames Panel -->
@@ -274,6 +293,35 @@
         .addEventListener("click", (e) => {
           app.exportAnimation();
         });
+
+      // Theme toggle logic
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeText = document.getElementById("themeText");
+      let isDark = true;
+
+      function setTheme(dark) {
+        const root = document.documentElement;
+        if (dark) {
+          root.classList.add("dark-mode");
+          root.classList.remove("light-mode");
+          themeIcon.textContent = "🌙";
+          themeText.textContent = "Dark Mode";
+        } else {
+          root.classList.add("light-mode");
+          root.classList.remove("dark-mode");
+          themeIcon.textContent = "☀️";
+          themeText.textContent = "Light Mode";
+        }
+      }
+
+      themeToggleBtn.addEventListener("click", () => {
+        isDark = !isDark;
+        setTheme(isDark);
+      });
+
+      // Initialize theme
+      setTheme(isDark);
     </script>
     <script>
       toggleFramesPanel = () => {

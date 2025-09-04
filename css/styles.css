@@ -9,6 +9,95 @@ body {
   background: #1a1a1a;
   color: white;
   overflow: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+
+html.light-mode body {
+  background: #f5f5f5;
+  color: #222;
+}
+
+html.light-mode .toolbar {
+  background: #e0e0e0;
+  border-right: 1px solid #bbb;
+}
+html.light-mode .tool-btn {
+  background: #f5f5f5;
+  color: #222;
+}
+html.light-mode .tool-btn:hover {
+  background: #e0e0e0;
+}
+html.light-mode .tool-btn.active {
+  background: #0078d4;
+  color: white;
+}
+html.light-mode .canvas-container {
+  background: #fafafa;
+}
+html.light-mode .properties-panel {
+  background: #e0e0e0;
+  border-left: 1px solid #bbb;
+  color: #222;
+}
+html.light-mode .property-group h3 {
+  color: #333;
+}
+html.light-mode .close-properties-panel {
+  color: #222;
+}
+html.light-mode .property-row input,
+html.light-mode .property-row select,
+html.light-mode .property-row button {
+  background: #f5f5f5;
+  color: #222;
+  border: 1px solid #bbb;
+}
+html.light-mode .frames-panel {
+  background: #e0e0e0;
+  border-top: 1px solid #bbb;
+}
+html.light-mode .frame-thumbnail {
+  background: #fff;
+  border: 2px solid #bbb;
+}
+html.light-mode .frame-thumbnail.active {
+  border-color: #0078d4;
+}
+html.light-mode .add-frame-btn {
+  background: #f5f5f5;
+  border: 2px dashed #bbb;
+  color: #bbb;
+}
+html.light-mode .add-frame-btn:hover {
+  background: #e0e0e0;
+  border-color: #aaa;
+}
+html.light-mode .animation-controls .control-btn {
+  background: #f5f5f5;
+  color: #222;
+}
+html.light-mode .animation-controls .control-btn:hover {
+  background: #e0e0e0;
+}
+html.light-mode .fps-control input {
+  background: #f5f5f5;
+  color: #222;
+  border: 1px solid #bbb;
+}
+
+html.light-mode .handle {
+  background: #0078d4;
+  border: 1px solid #fff;
+}
+
+html.light-mode .color-preview {
+  border: 1px solid #bbb;
+}
+html.light-mode #framesToggleBtn {
+  background: #f5f5f5;
+  color: #222;
+  border: 1px solid #bbb;
 }
 
 .app-container {
@@ -81,11 +170,11 @@ body {
 }
 
 .properties-panel {
-  width: 280px;
+  width: 288px;
   background: #2d2d2d;
   padding: 15px;
   border-left: 1px solid #444;
-  overflow-y: auto;
+  overflow-y: none;
 }
 
 .close-properties-panel {
