@@ -28,26 +28,42 @@ class FreehandStroke extends Shape {
     }
   }
   // Douglas-Peucker Algorithm for stroke smoothing
+  // Douglas-Peucker Algorithm for stroke smoothing
+  // points: array of Point instances representing the stroke
+  // epsilon: threshold for maximum allowed deviation (smoothing factor)
+  // dmax: maximum perpendicular distance found between a point and the line segment (start to end)
+  // index: index of the point with maximum distance
+  // end: index of the last point in the array
+  // d: perpendicular distance from points[i] to the line segment (points[0] to points[end])
+  // recResults1: recursively simplified points from start to index
+  // recResults2: recursively simplified points from index to end
+  // Returns: array of Points representing the simplified (smoothed) stroke
   douglasPeucker(points, epsilon) {
     if (points.length <= 2) return points;
-    let dmax = 0;
-    let index = 0;
-    const end = points.length - 1;
+    let dmax = 0; // max perpendicular distance
+    let index = 0; // index of point with max distance
+    const end = points.length - 1; // last point index
     for (let i = 1; i < end; i++) {
+      // Compute perpendicular distance from points[i] to line (points[0] to points[end])
       const d = this.perpendicularDistance(points[i], points[0], points[end]);
       if (d > dmax) {
         index = i;
         dmax = d;
       }
     }
+    // If max distance exceeds epsilon, recursively simplify
     if (dmax > epsilon) {
+      // Recursively process first segment (start to index)
       const recResults1 = this.douglasPeucker(
         points.slice(0, index + 1),
         epsilon
       );
+      // Recursively process second segment (index to end)
       const recResults2 = this.douglasPeucker(points.slice(index), epsilon);
+      // Concatenate results, removing duplicate at join
       return recResults1.slice(0, -1).concat(recResults2);
     } else {
+      // If no point exceeds epsilon, keep only endpoints
       return [points[0], points[end]];
     }
   }
@@ -64,6 +80,15 @@ class FreehandStroke extends Shape {
     const projection = new Point(lineStart.x + t * dx, lineStart.y + t * dy);
     return point.distance(projection);
   }
+  // Calculates the shortest distance from a point to a line segment
+  // A, B: vector from lineStart to point
+  // C, D: vector from lineStart to lineEnd
+  // dot: dot product of vectors (A,B) and (C,D)
+  // lenSq: squared length of the line segment
+  // param: normalized position of the projection on the segment (0=start, 1=end)
+  // xx, yy: coordinates of the closest point on the segment to 'point'
+  // dx, dy: vector from 'point' to closest point on segment
+  // Returns: Euclidean distance from 'point' to the segment
   distanceToLine(point, lineStart, lineEnd) {
     const A = point.x - lineStart.x;
     const B = point.y - lineStart.y;

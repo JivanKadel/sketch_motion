@@ -174,7 +174,7 @@ html.light-mode #framesToggleBtn {
   background: #2d2d2d;
   padding: 15px;
   border-left: 1px solid #444;
-  overflow-y: none;
+  overflow-y: auto;
 }
 
 .close-properties-panel {
