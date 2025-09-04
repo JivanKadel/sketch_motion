@@ -37,8 +37,8 @@ class CircleShape extends Shape {
   }
   clone() {
     const circle = new CircleShape();
-    circle.centerX = this.centerX + 10;
-    circle.centerY = this.centerY;
+    circle.centerX = this.centerX + 1;
+    circle.centerY = this.centerY + 1;
     circle.radius = this.radius;
     circle.strokeColor = this.strokeColor;
     circle.strokeWidth = this.strokeWidth;

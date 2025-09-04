@@ -159,7 +159,7 @@ class FreehandStroke extends Shape {
       this.smoothingEnabled
     );
     stroke.points = this.points
-      ? this.points.map((pt) => new Point(pt.x + 10, pt.y))
+      ? this.points.map((pt) => new Point(pt.x + 1, pt.y))
       : [];
     // Recompute smoothedPoints based on cloned points and smoothing settings
     if (stroke.smoothingEnabled) {

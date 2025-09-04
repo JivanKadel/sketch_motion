@@ -45,8 +45,8 @@ class OvalShape extends Shape {
   }
   clone() {
     const oval = new OvalShape();
-    oval.centerX = this.centerX + 10;
-    oval.centerY = this.centerY;
+    oval.centerX = this.centerX + 1;
+    oval.centerY = this.centerY + 1;
     oval.radiusX = this.radiusX;
     oval.radiusY = this.radiusY;
     oval.strokeColor = this.strokeColor;

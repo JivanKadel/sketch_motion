@@ -45,8 +45,8 @@ class ImageShape extends Shape {
 
   clone() {
     const img = new ImageShape();
-    img.x = this.x + 10;
-    img.y = this.y;
+    img.x = this.x + 1;
+    img.y = this.y + 1;
     img.width = this.width;
     img.height = this.height;
     img.image = this.image;

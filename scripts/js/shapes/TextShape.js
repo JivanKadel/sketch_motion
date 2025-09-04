@@ -35,8 +35,8 @@ class TextShape extends Shape {
   }
   clone() {
     const text = new TextShape();
-    text.x = this.x + 10;
-    text.y = this.y;
+    text.x = this.x + 1;
+    text.y = this.y + 1;
     text.text = this.text;
     text.font = this.font;
     text.fontSize = this.fontSize;

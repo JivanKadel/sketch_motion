@@ -38,8 +38,8 @@ class RectangleShape extends Shape {
   }
   clone() {
     const rect = new RectangleShape();
-    rect.x = this.x + 10;
-    rect.y = this.y;
+    rect.x = this.x + 1;
+    rect.y = this.y + 1;
     rect.width = this.width;
     rect.height = this.height;
     rect.strokeColor = this.strokeColor;

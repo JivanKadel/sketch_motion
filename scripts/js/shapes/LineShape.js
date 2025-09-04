@@ -55,8 +55,8 @@ class LineShape extends Shape {
   }
   clone() {
     const line = new LineShape();
-    line.start = new Point(this.start.x + 10, this.start.y);
-    line.end = new Point(this.end.x + 10, this.end.y);
+    line.start = new Point(this.start.x + 1, this.start.y);
+    line.end = new Point(this.end.x + 1, this.end.y);
     line.strokeColor = this.strokeColor;
     line.strokeWidth = this.strokeWidth;
     line.transform = this.transform ? this.transform.clone() : null;

@@ -43,8 +43,8 @@ class DiamondShape extends Shape {
   }
   clone() {
     const diamond = new DiamondShape();
-    diamond.centerX = this.centerX + 10;
-    diamond.centerY = this.centerY;
+    diamond.centerX = this.centerX + 1;
+    diamond.centerY = this.centerY + 1;
     diamond.width = this.width;
     diamond.height = this.height;
     diamond.strokeColor = this.strokeColor;
