@@ -1,4 +1,5 @@
 import LineShape from "./LineShape.js";
+import Point from "../core/Point.js";
 // Represents an arrow shape
 class ArrowShape extends LineShape {
   constructor(start, end) {
@@ -53,10 +54,12 @@ class ArrowShape extends LineShape {
   }
   clone() {
     const arrow = new ArrowShape();
-    arrow.x1 = this.x1 + 10;
-    arrow.y1 = this.y1;
-    arrow.x2 = this.x2 + 10;
-    arrow.y2 = this.y2;
+    // arrow.x1 = this.x1 + 1;
+    // arrow.y1 = this.y1;
+    // arrow.x2 = this.x2 + 1;
+    // arrow.y2 = this.y2;
+    arrow.start = new Point(this.start.x + 1, this.start.y);
+    arrow.end = new Point(this.end.x + 1, this.end.y);
     arrow.strokeColor = this.strokeColor;
     arrow.strokeWidth = this.strokeWidth;
     arrow.arrowHeadSize = this.arrowHeadSize;
