@@ -400,16 +400,23 @@ export default class ShapeManager {
         shapeY = shape.start.y;
       }
 
-      document.getElementById("transformX").value = shapeX.toString();
-      document.getElementById("transformY").value = shapeY.toString();
-      document.getElementById("scale").value = shape.transform.scale.toString();
-      document.getElementById("rotation").value =
-        shape.transform.rotation.toString();
+      document.getElementById("transformX").value = shapeX
+        .toFixed(2)
+        .toString();
+      document.getElementById("transformY").value = shapeY
+        .toFixed(2)
+        .toString();
+      document.getElementById("scale").value = shape.transform.scale
+        .toFixed(2)
+        .toString();
+      document.getElementById("rotation").value = shape.transform.rotation
+        .toFixed(2)
+        .toString();
     } else {
-      document.getElementById("transformX").value = "0";
-      document.getElementById("transformY").value = "0";
-      document.getElementById("scale").value = "1";
-      document.getElementById("rotation").value = "0";
+      document.getElementById("transformX").value = "0.00";
+      document.getElementById("transformY").value = "0.00";
+      document.getElementById("scale").value = "1.00";
+      document.getElementById("rotation").value = "0.00";
     }
   }
 }
